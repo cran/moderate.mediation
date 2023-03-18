@@ -235,7 +235,7 @@ modmed = function(
         stop("Please make sure that the length and order of comp.mod.cont.values should be the same as moderators.cont")
     }
     
-    if(!is.null(ref.mod.disc.values)){
+    if(!is.null(ref.mod.disc.values) & !is.na(ref.mod.disc.values)){
       for(i in 1:length(ref.mod.disc.values)){
         if(!ref.mod.disc.values[i] %in% unique(data[, moderators.disc[i]]))
           stop("Please specify each of ref.mod.disc.values to be one of the values of the corresponding moderator in the data")
