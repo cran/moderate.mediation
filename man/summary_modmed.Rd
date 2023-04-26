@@ -18,6 +18,7 @@ Summarizing Output for Causal Moderated Mediation Analysis
 'summary_modmed' is used to report from causal moderated mediation analysis
 }
 \examples{
+\donttest{
 data(newws)
 modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     outcome = "depression", covariates.disc = c("emp_prior", "nevmar",
@@ -34,6 +35,7 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
 summary_modmed(modmed.results)
+}
 }
 \references{
 Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.

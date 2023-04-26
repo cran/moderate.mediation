@@ -11,7 +11,7 @@ sens.plot(object, sens.results, effect)
 
 \item{sens.results}{An output from the \code{modmed.sens} function.}
 
-\item{effect}{The name of the effect whose sensitivity analysis results are to be plotted (string). effect can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".}
+\item{effect}{The name of the effect whose sensitivity analysis results are to be plotted (string). Only one effect is plotted at a time. It can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif". It must be included in sens.effect when running the \code{modmed.sens} function.}
 }
 \value{
 Sensitivity analysis plots for the causal effects in the causal moderated mediation analysis.

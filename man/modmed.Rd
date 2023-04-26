@@ -31,8 +31,10 @@ modmed(
   seed = NULL,
   object = NULL,
   is.U = FALSE,
+  sens.effect = NULL,
   b.m = NULL,
-  b.y = NULL
+  b.y = NULL,
+  plot.effect = NULL
 )
 }
 \arguments{
@@ -44,17 +46,17 @@ modmed(
 
 \item{outcome}{A character string indicating the name of the outcome variable.}
 
-\item{covariates.disc}{A name vector of all the discrete pretreatment covariates under study (string). The default is NULL. Users do not need to reformat discrete variables. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept.}
+\item{covariates.disc}{A name vector of the discrete pretreatment covariates that are not moderators (string). The default is NULL. Users do not need to reformat discrete variables. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept.}
 
-\item{covariates.cont}{A name vector of all the continuous pretreatment covariates under study (string). The default is NULL. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept.}
+\item{covariates.cont}{A name vector of the continuous pretreatment covariates that are not moderators (string). The default is NULL. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept.}
 
-\item{moderators.disc}{A name vector of all the discrete moderator under study (string). The default is NULL.}
+\item{moderators.disc}{A name vector of all the discrete moderators under study (string). The default is NULL.}
 
-\item{moderators.cont}{A name vector of all thecontinuous moderator under study (string). The default is NULL.}
+\item{moderators.cont}{A name vector of all the continuous moderators under study (string). The default is NULL.}
 
-\item{m.model}{A list. The name of each element in the list is a predictor in the main mediator model.  The names must include intercept, treatment, and the pretreatment covariates that are confounders of the mediator-outcome relationship but not moderators. If treatment is not randomized, pretreatment covariates that are confounders of the treatment-mediator relationship but not moderators should also be included. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of the moderators contained in this list is a subset of the combination of moderators.disc and moderators.cont. The set of moderators in m.model and that in y.model are not necessarily the same. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.}
+\item{m.model}{A list. The name of each element in the list is a predictor in the main mediator model.  The names must include intercept, treatment, covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. Each moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of moderators in m.model and that in y.model are not necessarily the same. In other words, for a moderator that moderates coefficient(s) in one model, it is possible that it does not occur in the other model. It is also possible that it only has its main effect in the other model, in which case it will be only included in the vector of the intercept in the list of the other model. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.}
 
-\item{y.model}{A list. The name of each element in the list is a predictor in the main outcome model. The names must include intercept, treatment, mediator, and the pretreatment covariates that are confounders of mediator-outcome relationship but not moderators. If treatment is not randomized, pretreatment covariates that are confounders of the treatment-outcome relationship but not moderators should also be included. If the treatment is assumed to interact with the mediator when affecting the outcome, an additional element should be added to y.model, named as "tm". Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of the moderators contained in this list is a subset of the combination of moderators.disc and moderators.cont. The set of moderators in m.model and that in y.model are not necessarily the same. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.}
+\item{y.model}{A list. The name of each element in the list is a predictor in the main outcome model. The names must include intercept, treatment, mediator, covariates.disc, and covariates.cont. If the treatment is assumed to interact with the mediator when affecting the outcome, an additional element should be added to y.model, named as "tm". Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. Each moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the main mediator model or the main outcome model. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of moderators in m.model and that in y.model are not necessarily the same. In other words, for a moderator that moderates coefficient(s) in one model, it is possible that it does not occur in the other model. It is also possible that it only has its main effect in the other model, in which case it will be only included in the vector of the intercept in the list of the other model. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.}
 
 \item{comp.treatment.value}{If the total treatment effect for each individual is defined as Y(t) - Y(t'), comp.treatment.value refers to t. The default is 1.}
 
@@ -86,9 +88,13 @@ modmed(
 
 \item{is.U}{A logical value. 'FALSE' in the original analysis. 'TRUE' in the sensitivity analysis which adjusts for a simulated unmeasured pretreatment confounder U. The default is FALSE.}
 
-\item{b.m}{Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the mediator. It is NULL in the original analysis. The default is NULL.}
+\item{sens.effect}{The default is NULL. It is used only when modmed.sens is run.}
 
-\item{b.y}{Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the outcome. It is NULL in the original analysis. The default is NULL.}
+\item{b.m}{Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the mediator. It is NULL in the original analysis. The default is NULL. It is used only when modmed.sens is run.}
+
+\item{b.y}{Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the outcome. It is NULL in the original analysis. The default is NULL. It is used only when modmed.sens is run.}
+
+\item{plot.effect}{The effect to be plotted. The default is NULL. It is used only when modmed.plot is run.}
 }
 \value{
 A list containing
@@ -123,6 +129,7 @@ Causal Moderated Mediation Analysis
 'modmed' is used to fit mediator and outcome models and estimate and test causal effects for causal moderated mediation analysis. It is applicable to a treatment of any scale, a binary or continuous mediator and outcome, one or more moderators of any scale, and a wide range of scenarios of moderated mediation.
 }
 \examples{
+\donttest{
 data(newws)
 modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     outcome = "depression", covariates.disc = c("emp_prior", "nevmar",
@@ -138,6 +145,7 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
+}
 }
 \references{
 Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.

@@ -12,7 +12,8 @@ modmed.plot(
   other.mod.disc.values = NULL,
   other.mod.cont.values = NULL,
   is.dist.moderator = FALSE,
-  probs = c(0.1, 0.25, 0.5, 0.75, 0.9)
+  probs = c(0.1, 0.25, 0.5, 0.75, 0.9),
+  ncore = detectCores()
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ modmed.plot(
 \item{is.dist.moderator}{A logical value. "TRUE" if distribution of the specified moderator is to be plotted at the bottom, and "FALSE" if not. The default is "FALSE".}
 
 \item{probs}{A vector of percentiles to be plotted on the distribution of the moderator if the moderator is continuous. NULL if is.dist.moderator = FALSE. The default is c(0.1, 0.25, 0.5, 0.75, 0.9).}
+
+\item{ncore}{The number of cores for parallel computing. The default is the number of CPU cores on the current host.}
 }
 \value{
 \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.

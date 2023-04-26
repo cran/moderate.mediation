@@ -28,12 +28,12 @@ NULL
 #' @param treatment A character string indicating the name of the treatment variable.
 #' @param mediator A character string indicating the name of the mediator variable.
 #' @param outcome A character string indicating the name of the outcome variable.
-#' @param covariates.disc A name vector of all the discrete pretreatment covariates under study (string). The default is NULL. Users do not need to reformat discrete variables. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept. 
-#' @param covariates.cont A name vector of all the continuous pretreatment covariates under study (string). The default is NULL. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept. 
-#' @param moderators.disc A name vector of all the discrete moderator under study (string). The default is NULL.  
-#' @param moderators.cont A name vector of all thecontinuous moderator under study (string). The default is NULL. 
-#' @param m.model A list. The name of each element in the list is a predictor in the main mediator model.  The names must include intercept, treatment, and the pretreatment covariates that are confounders of the mediator-outcome relationship but not moderators. If treatment is not randomized, pretreatment covariates that are confounders of the treatment-mediator relationship but not moderators should also be included. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of the moderators contained in this list is a subset of the combination of moderators.disc and moderators.cont. The set of moderators in m.model and that in y.model are not necessarily the same. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.
-#' @param y.model A list. The name of each element in the list is a predictor in the main outcome model. The names must include intercept, treatment, mediator, and the pretreatment covariates that are confounders of mediator-outcome relationship but not moderators. If treatment is not randomized, pretreatment covariates that are confounders of the treatment-outcome relationship but not moderators should also be included. If the treatment is assumed to interact with the mediator when affecting the outcome, an additional element should be added to y.model, named as "tm". Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of the moderators contained in this list is a subset of the combination of moderators.disc and moderators.cont. The set of moderators in m.model and that in y.model are not necessarily the same. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.
+#' @param moderators.disc A name vector of all the discrete moderators under study (string). The default is NULL.  
+#' @param moderators.cont A name vector of all the continuous moderators under study (string). The default is NULL.
+#' @param covariates.disc A name vector of the discrete pretreatment covariates that are not moderators (string). The default is NULL. Users do not need to reformat discrete variables. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept. 
+#' @param covariates.cont A name vector of the continuous pretreatment covariates that are not moderators (string). The default is NULL. If treatment is randomized, it should contain confounders of the mediator-outcome relationship. If treatment is not randomized, it should also contain confounders of the treatment-mediator and treatment-outcome relationships. Please do not include moderators here. The main effects of moderators are accounted for by including the moderators in the model of the main model intercept. 
+#' @param m.model A list. The name of each element in the list is a predictor in the main mediator model.  The names must include intercept, treatment, covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. Each moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of moderators in m.model and that in y.model are not necessarily the same. In other words, for a moderator that moderates coefficient(s) in one model, it is possible that it does not occur in the other model. It is also possible that it only has its main effect in the other model, in which case it will be only included in the vector of the intercept in the list of the other model. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.
+#' @param y.model A list. The name of each element in the list is a predictor in the main outcome model. The names must include intercept, treatment, mediator, covariates.disc, and covariates.cont. If the treatment is assumed to interact with the mediator when affecting the outcome, an additional element should be added to y.model, named as "tm". Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. Each moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the main mediator model or the main outcome model. The moderators of the intercept must include all the moderators in the mediator model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The set of moderators in m.model and that in y.model are not necessarily the same. In other words, for a moderator that moderates coefficient(s) in one model, it is possible that it does not occur in the other model. It is also possible that it only has its main effect in the other model, in which case it will be only included in the vector of the intercept in the list of the other model. The union of the two sets of moderators should be contained in the union of moderators.disc, and moderators.cont. If no moderators are specified, only the population average mediation effects are estimated and tested. Check examples for details.
 #' @param comp.treatment.value If the total treatment effect for each individual is defined as Y(t) - Y(t'), comp.treatment.value refers to t. The default is 1.
 #' @param ref.treatment.value If the total treatment effect for each individual is defined as Y(t) - Y(t'), ref.treatment.value refers to t'. The default is 0.
 #' @param comp.mod.disc.values A vector of compare values of the discrete moderators given which the conditional causal effects are estimated. The default is NULL.  The length and order of comp.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA. If the discrete moderators take the same compare value, comp.moderator.disc.values can be specified as a single value. If not NULL, results contrasting the causal effects given compare moderator values with those given reference moderator values will be reported.
@@ -49,8 +49,10 @@ NULL
 #' @param seed The seed for the random number generator. The default value is NULL.
 #' @param object Output from the original analysis only if is.U = TRUE. NULL in the original analysis. The default is NULL.
 #' @param is.U A logical value. 'FALSE' in the original analysis. 'TRUE' in the sensitivity analysis which adjusts for a simulated unmeasured pretreatment confounder U. The default is FALSE.
-#' @param b.m Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the mediator. It is NULL in the original analysis. The default is NULL.
-#' @param b.y Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the outcome. It is NULL in the original analysis. The default is NULL.
+#' @param sens.effect The default is NULL. It is used only when modmed.sens is run.
+#' @param b.m Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the mediator. It is NULL in the original analysis. The default is NULL. It is used only when modmed.sens is run.
+#' @param b.y Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the outcome. It is NULL in the original analysis. The default is NULL. It is used only when modmed.sens is run.
+#' @param plot.effect The effect to be plotted. The default is NULL. It is used only when modmed.plot is run.
 #' 
 #' @return A list containing
 #' \item{effects}{Estimation results of the causal effects. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
@@ -83,7 +85,9 @@ NULL
 #' @export
 #' @importFrom stats vcov quantile as.formula coef fitted glm lm predict model.matrix 
 #' @importFrom mvtnorm rmvnorm
+#' @importFrom earth earth
 #' @examples
+#' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, 
 #'                         treatment = "treat", 
@@ -102,6 +106,7 @@ NULL
 #'                         m.scale = "binary", 
 #'                         y.scale = "continuous", 
 #'                         seed = 1) 
+#'}
 
 modmed = function(
     data,
@@ -129,8 +134,10 @@ modmed = function(
     seed = NULL, 
     object = NULL,
     is.U = FALSE,
+    sens.effect = NULL,
     b.m = NULL,
-    b.y = NULL
+    b.y = NULL,
+    plot.effect = NULL
 ){
   if(sum(is.na(data)))
     stop("Users need to impute any missing values in the data before running the function.")
@@ -140,35 +147,50 @@ modmed = function(
   confounders = c(covariates.disc, covariates.cont)
   moderators = c(moderators.disc, moderators.cont)
   if(any(moderators %in% confounders))
-    stop("Please do not include moderators in the vector of confounders")
+    stop("Please do not include moderators in covariates.disc or covariates.cont")
   ref.mod.values = c(ref.mod.disc.values, ref.mod.cont.values)
   comp.mod.values = c(comp.mod.disc.values, comp.mod.cont.values)
   
   if(!is.U){
     m.predictors = names(m.model)
     if(!"intercept" %in% m.predictors)
-      stop("The list names of m.model must include 'Intercept'.")  
+      stop("The element names in m.model must include 'Intercept'.")  
     m.predictors = m.predictors[-which(m.predictors == "intercept")]
     if(treatment %in% m.predictors)
-      stop("Please specify the list name of the treatment in m.model as 'treatment' rather than its actual variable name.")
+      stop("Please specify the element name that corresponds to the treatment in m.model as 'treatment' rather than its actual variable name.")
     if(!"treatment" %in% m.predictors)
-      stop("The list names of m.model must include 'treatment'. In other words, predictors in the main model of the mediator must include the treatment")  
+      stop("The element names in m.model must include 'treatment'. In other words, predictors in the main model of the mediator must include the treatment.")  
     m.predictors[which(m.predictors == "treatment")] = treatment
     
     y.predictors = names(y.model)
     if(!"intercept" %in% y.predictors)
-      stop("The list names of y.model must include 'Intercept'.") 
+      stop("The element names in y.model must include 'Intercept'.") 
     y.predictors = y.predictors[-which(y.predictors == "intercept")]
     if(treatment %in% y.predictors)
-      stop("Please specify the list name of the treatment in y.model as 'treatment' rather than its actual variable name.")  
+      stop("Please specify the element name that corresponds to the treatment in y.model as 'treatment' rather than its actual variable name.")  
     if(!"treatment" %in% y.predictors)
-      stop("The list names of y.model must include 'treatment'. In other words, predictors in the main model of the outcome must include the treatment")
+      stop("The element names in y.model must include 'treatment'. In other words, predictors in the main model of the outcome must include the treatment.")
     if(mediator %in% y.predictors)
-      stop("Please specify the list name of the mediator in y.model as 'mediator' rather than its actual variable name.") 
+      stop("Please specify the element name that corresponds to the mediator in y.model as 'mediator' rather than its actual variable name.") 
     if(!"mediator" %in% y.predictors)
-      stop("The list names of y.model must include 'mediator'. In other words, predictors in the main model of the outcome must include the mediator")
+      stop("The element names in y.model must include 'mediator'. In other words, predictors in the main model of the outcome must include the mediator.")
     y.predictors[which(y.predictors == "treatment")] = treatment
     y.predictors[which(y.predictors == "mediator")] = mediator
+    
+    if(any(moderators %in% m.predictors)|any(moderators %in% y.predictors)){
+      stop("The element names in m.model or y.model cannot include moderators. In other words, please do not include moderators in the main model.")
+    } else {
+      if(any(!m.predictors %in% c(treatment, confounders)))
+        stop("The pretreatment covariates that are not moderators in the mediator model (i.e., the element names that are not intercept or treatment in m.model) should be contained in the union of covariates.disc and covariates.cont.")
+      if(any(!y.predictors %in% c(treatment, mediator, confounders))){
+        if(any(!y.predictors %in% c(treatment, mediator, "tm", confounders)))
+          stop("The pretreatment covariates that are not moderators in the outcome model (i.e., the element names that are not intercept, treatment, or mediator in y.model) should be contained in the union of covariates.disc and covariates.cont. If there is treatment-by-mediator interaction, it must be named as 'tm'.")
+      }
+    }
+    
+    if("tm" %in% y.predictors){
+      y.predictors[which(y.predictors == "tm")] = paste0(treatment, ":", mediator)
+    }   
     
     m.model = append(m.model[which(names(m.model) == "intercept")], m.model)
     m.model = m.model[-which(names(m.model) == "intercept")[2]]
@@ -179,37 +201,34 @@ modmed = function(
     m.moderators.ori = unique(unlist(m.moderators))
     y.moderators.ori = unique(unlist(y.moderators))
     
-    if(any(moderators %in% m.predictors)|any(moderators %in% y.predictors)){
-      stop("The list names of m.model or y.model cannot include moderators. In other words, please do not include moderators in the main model.")
-    } else {
-      if(any(!m.predictors %in% c(treatment, confounders)))
-        stop("The pretreatment covariates in the mediator model (i.e., the list names of m.model) should be contained in the union of covariates.disc and covariates.cont.")
-      if(any(!y.predictors %in% c(treatment, mediator, confounders))){
-        if(any(!y.predictors %in% c(treatment, mediator, "tm", confounders)))
-          stop("The pretreatment covariates in the outcome model (i.e., the list names of y.model) should be contained in the union of covariates.disc and covariates.cont. If there is treatment-by-mediator interaction, it must be named as 'tm'.")
-      }
-    }
-    if("tm" %in% y.predictors){
-      y.predictors[which(y.predictors == "tm")] = paste0(treatment, ":", mediator)
-    }       
+    if(any(!unique(c(m.moderators.ori, y.moderators.ori)) %in% moderators)|any(!moderators %in% unique(c(m.moderators.ori, y.moderators.ori))))
+      stop('The union of the two sets of moderators in m.model and y.model should be the same as the union of moderators.disc and moderators.cont.')
     
-    if(any(!m.moderators.ori %in% moderators))
-      stop("The moderators in the mediator model should be contained in the union of moderators.disc and moderators.cont.")
-    if(any(!y.moderators.ori %in% moderators))
-      stop("The moderators in the outcome model should be contained in the union of moderators.disc and moderators.cont.")
-    if(any(!moderators[which(!is.na(ref.mod.values))] %in% unique(c(m.moderators.ori, y.moderators.ori))))
-      stop("The moderators whose reference values are specified must be included in either the mediator model or the outcome model or both.")
+    for(i in 1:length(moderators)){
+      if(!moderators[i] %in% unique(unlist(m.moderators[-1])) & !moderators[i] %in% unique(unlist(y.moderators[-1])))
+        stop("A moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model.")
+    }
+    
     if(!all(is.null(unlist(m.moderators)))){
-      if(length(m.moderators[[which(names(m.moderators) == "intercept")]]) > length(unique(unlist(m.moderators[-which(names(m.moderators) == "intercept")]))))
-        stop("A moderator in m.model should not be only included in the intercept of the main model.")
       if(!all(unique(unlist(m.moderators[-which(names(m.moderators) == "intercept")])) %in% m.moderators[[which(names(m.moderators) == "intercept")]]))
         stop("The moderators of the intercept of m.model must include all the moderators in the mediator model.")
     }
     if(!all(is.null(unlist(y.moderators)))){
-      if(length(y.moderators[[which(names(y.moderators) == "intercept")]]) > length(unique(unlist(y.moderators[-which(names(y.moderators) == "intercept")]))))
-        stop("A moderator in y.model should not be only included in the intercept of the main model.")
       if(!all(unique(unlist(y.moderators[-which(names(y.moderators) == "intercept")])) %in% y.moderators[[which(names(y.moderators) == "intercept")]]))
         stop("The moderators of the intercept of y.model must include all the moderators in the outcome model.")
+    }
+    
+    if(is.null(ref.mod.disc.values) & !is.null(moderators.disc)){
+      stop("If moderators.disc is not NULL, ref.mod.disc.values should not be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+    }
+    if(!is.null(ref.mod.disc.values) & is.null(moderators.disc)){
+      stop("If moderators.disc is NULL, ref.mod.disc.values should also be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc.")
+    }
+    if(is.null(ref.mod.cont.values) & !is.null(moderators.cont)){
+      stop("If moderators.cont is not NULL, ref.mod.cont.values should not be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+    }
+    if(!is.null(ref.mod.cont.values) & is.null(moderators.cont)){
+      stop("If moderators.cont is NULL, ref.mod.cont.values should also be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont.")
     }
     
     if(!is.null(ref.mod.disc.values)){
@@ -225,6 +244,13 @@ modmed = function(
       stop("Please make sure to specify ref.mod.disc.values before specifying comp.mod.disc.values")
     if(is.null(ref.mod.cont.values) & !is.null(comp.mod.cont.values))
       stop("Please make sure to specify ref.mod.cont.values before specifying comp.mod.cont.values")
+    
+    if(!is.null(comp.mod.disc.values) & is.null(moderators.disc)){
+      stop("If moderators.disc is NULL, comp.mod.disc.values should also be NULL. The length and order of comp.mod.disc.values should be the same as moderators.disc.")
+    }
+    if(!is.null(comp.mod.cont.values) & is.null(moderators.cont)){
+      stop("If moderators.cont is NULL, comp.mod.cont.values should also be NULL. The length and order of comp.mod.cont.values should be the same as moderators.cont.")
+    }
     
     if(!is.null(comp.mod.disc.values)){
       if(length(comp.mod.disc.values) != length(moderators.disc))
@@ -414,8 +440,6 @@ modmed = function(
     predict.y.data = object$predict.y.data
   }
   
-  set.seed(seed)
-  
   # Fit mediator and outcome model based on the original data set first
   if(m.scale == "binary" & y.scale == "continuous"){
     # Step 1. Fit mediator and outcome models
@@ -502,6 +526,8 @@ modmed = function(
       stop("NA in coefficients of the outcome model. Please double check.")
     }
   }
+  
+  set.seed(seed)
   
   # Monte Carlo method
   if(method == 'mc'){
@@ -677,17 +703,129 @@ modmed = function(
     est.y1m0 = y1m0(predict.m.data, predict.y.data)
     est.y0m0 = y0m0(predict.m.data, predict.y.data)
     est.y0m1 = y0m1(predict.m.data, predict.y.data)
-    if(!is.null(ref.mod.values)){
-      y1m1.ref = y1m1(predict.m.data.ref, predict.y.data.ref)
-      y1m0.ref = y1m0(predict.m.data.ref, predict.y.data.ref)
-      y0m0.ref = y0m0(predict.m.data.ref, predict.y.data.ref)
-      y0m1.ref = y0m1(predict.m.data.ref, predict.y.data.ref)
-    }  
-    if(!is.null(comp.mod.values)){
-      y1m1.dif = y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref
-      y1m0.dif = y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref
-      y0m0.dif = y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref
-      y0m1.dif = y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref
+    
+    if(is.null(plot.effect)){
+      if(is.U){
+        sens.results = NULL
+        if("TIE" %in% sens.effect){
+          TIE = apply(est.y1m1 - est.y1m0, 2, mean)
+          sens.results = cbind(sens.results, TIE)
+        }
+        if("PDE" %in% sens.effect){
+          PDE = apply(est.y1m0 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, PDE)
+        }
+        if("PIE" %in% sens.effect){
+          PIE = apply(est.y0m1 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, PIE)
+        }
+        if("TDE" %in% sens.effect){
+          TDE = apply(est.y1m1 - est.y0m1, 2, mean)
+          sens.results = cbind(sens.results, TDE)
+        }
+        if("INT" %in% sens.effect){
+          INT = apply(est.y1m1 - est.y1m0, 2, mean) - apply(est.y0m1 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, INT)
+        }
+      } else {
+        TIE = apply(est.y1m1 - est.y1m0, 2, mean)
+        PDE = apply(est.y1m0 - est.y0m0, 2, mean)
+        PIE = apply(est.y0m1 - est.y0m0, 2, mean)
+        INT = TIE - PIE
+        TDE = PDE + INT
+        results = cbind(TIE, PIE, PDE, TDE, INT)
+      }
+    }
+    
+    if(!any(is.na(c(ref.mod.disc.values, ref.mod.cont.values)))){
+      if(is.null(confounders)|
+         m.scale == "continuous" & y.scale == "continuous"|
+         m.scale == "binary" & y.scale == "continuous" & !paste0(treatment, ":", mediator) %in% y.predictors){
+        if(!is.null(ref.mod.values)){
+          if(is.null(plot.effect)){
+            if(is.U){
+              if("TIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              }
+              if("TIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              }
+              if("PIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              }
+              if("PIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m1.ref = apply(y0m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              }
+            } else {
+              y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m1.ref = apply(y0m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              TIE.ref = y1m1.ref - y1m0.ref
+              PDE.ref = y1m0.ref - y0m0.ref
+              PIE.ref = y0m1.ref - y0m0.ref
+              INT.ref = TIE.ref - PIE.ref
+              TDE.ref = PDE.ref + INT.ref
+            }
+          } else {
+            if(plot.effect == "TIE"){
+              y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = y1m1.ref - y1m0.ref
+            }
+            if(plot.effect == "PIE"){
+              y0m1.ref = apply(y0m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = y0m1.ref - y0m0.ref
+            }
+            if(plot.effect == "TDE"){
+              y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m1.ref = apply(y0m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = y1m1.ref - y0m1.ref
+            }
+            if(plot.effect == "PDE"){
+              y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = y1m0.ref - y0m0.ref
+            }
+            if(plot.effect == "INT"){
+              y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m1.ref = apply(y0m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+            }
+          }
+        }  
+        if(!is.null(comp.mod.values)){
+          if(is.null(plot.effect)){
+            if(is.U){
+              if("TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m1.dif = apply(y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref, 2, mean)
+              }
+              if("TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m0.dif = apply(y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref, 2, mean)
+              }
+              if("PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m0.dif = apply(y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref, 2, mean)
+              }
+              if("PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m1.dif = apply(y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref, 2, mean)
+              }
+            } else {
+              y1m1.dif = apply(y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref, 2, mean)
+              y1m0.dif = apply(y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref, 2, mean)
+              y0m0.dif = apply(y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref, 2, mean)
+              y0m1.dif = apply(y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref, 2, mean)
+              TIE.dif = y1m1.dif - y1m0.dif
+              PDE.dif = y1m0.dif - y0m0.dif
+              PIE.dif = y0m1.dif - y0m0.dif
+              INT.dif = TIE.dif - PIE.dif
+              TDE.dif = PDE.dif + INT.dif
+            }
+          }
+        }
+      }
     }
   }
   
@@ -903,148 +1041,716 @@ modmed = function(
       est.y1m0 = cbind(est.y1m0, y1m0(predict.m.data, predict.y.data))
       est.y0m0 = cbind(est.y0m0, y0m0(predict.m.data, predict.y.data))
       est.y0m1 = cbind(est.y0m1, y0m1(predict.m.data, predict.y.data))
-      if(!is.null(ref.mod.values)){
-        y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
-        y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
-        y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
-        y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
-      }  
-      if(!is.null(comp.mod.values)){
-        y1m1.dif = cbind(y1m1.dif, y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref[, b])
-        y1m0.dif = cbind(y1m0.dif, y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref[, b])
-        y0m0.dif = cbind(y0m0.dif, y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref[, b])
-        y0m1.dif = cbind(y0m1.dif, y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref[, b])
-      }
-    }
-  }
-  
-  TIE = apply(est.y1m1 - est.y1m0, 2, mean)
-  PDE = apply(est.y1m0 - est.y0m0, 2, mean)
-  PIE = apply(est.y0m1 - est.y0m0, 2, mean)
-  INT = TIE - PIE
-  TDE = PDE + INT
-  results = cbind(TIE, PIE, PDE, TDE, INT)
-  if(!is.null(ref.mod.values)){
-    TIE.ref = apply(y1m1.ref - y1m0.ref, 2, mean)
-    PDE.ref = apply(y1m0.ref - y0m0.ref, 2, mean)
-    PIE.ref = apply(y0m1.ref - y0m0.ref, 2, mean)
-    INT.ref = TIE.ref - PIE.ref
-    TDE.ref = PDE.ref + INT.ref
-    results = cbind(results, TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
-  }
-  if(!is.null(comp.mod.values)){
-    TIE.dif = apply(y1m1.dif - y1m0.dif, 2, mean)
-    PDE.dif = apply(y1m0.dif - y0m0.dif, 2, mean)
-    PIE.dif = apply(y0m1.dif - y0m0.dif, 2, mean)
-    INT.dif = TIE.dif - PIE.dif
-    TDE.dif = PDE.dif + INT.dif
-    results = cbind(results, TIE.dif, PIE.dif, PDE.dif, TDE.dif, INT.dif)
-  }
-  
-  if(is.U){
-    return(results = results)
-  } else {
-    # Step 5. Compute summary statistics such as point estimates and confidence intervals.
-    est.results = apply(results, 2, mean)
-    se.results = apply(results, 2, sd)
-    ci.results = apply(results, 2, quantile, probs = c((1 - conf.level)/2, (1 + conf.level)/2))
-    
-    # Output
-    # Mediator and outcome models
-    summary.table = function(moderators, predictors, l){
-      if(is.null(moderators)){
-        return(summary(l))
-      }
       
-      if(!is.null(moderators)){
-        model.coef = names(coef(l))
-        
-        if(all(predictors %in% y.predictors.new) & all(y.predictors.new %in% predictors)){
-          if(paste0(treatment, ":", mediator) %in% model.coef)
-            predictors[which(predictors == paste0(treatment, ":", mediator))] = paste0(treatment, ":", mediator)
-          if(paste0(mediator, ":", treatment) %in% model.coef)
-            predictors[which(predictors == paste0(treatment, ":", mediator))] = paste0(mediator, ":", treatment)
-        }
-        
-        main = rep("Intercept", 1 + length(moderators[[1]]))
-        moderation = c("Intercept", moderators[[1]])
-        for(i in 1:length(predictors)){
-          moderation = c(moderation, "Intercept", moderators[[i + 1]])
-          main = c(main, rep(predictors[i], 1 + length(moderators[[i + 1]])))
-        }
-        
-        coef = NULL
-        for(i in 1:length(main)){
-          if(main[i] == "Intercept"){
-            coef = c(coef, paste0(moderation[i]))
-          } else {
-            if(moderation[i] == "Intercept"){
-              coef = c(coef, paste0(main[i]))
-            } else {
-              main.i = unlist(strsplit(main[i], ":"))
-              if(length(main.i) == 1){
-                if(paste0(main[i], ":", moderation[i]) %in% model.coef)
-                  coef = c(coef, paste0(main[i], ":", moderation[i]))
-                if(paste0(moderation[i], ":", main[i]) %in% model.coef)
-                  coef = c(coef, paste0(moderation[i], ":", main[i]))
+      if(!any(is.na(c(ref.mod.disc.values, ref.mod.cont.values)))){
+        if(is.null(confounders)|
+           m.scale == "continuous" & y.scale == "continuous"|
+           m.scale == "binary" & y.scale == "continuous" & !paste0(treatment, ":", mediator) %in% y.predictors){
+          if(!is.null(ref.mod.values)){
+            if(is.null(plot.effect)){
+              if(is.U){
+                if("TIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                }
+                if("TIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
+                }
+                if("PIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+                }
+                if("PIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
+                }
+              } else {
+                y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
+                y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+                y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
               }
-              if(length(main.i) == 2){
-                if(paste0(main.i[1], ":", main.i[2], ":", moderation[i]) %in% model.coef)
-                  coef = c(coef, paste0(main.i[1], ":", main.i[2], ":", moderation[i]))
-                if(paste0(main.i[1], ":", moderation[i], ":", main.i[2]) %in% model.coef)
-                  coef = c(coef, paste0(main.i[1], ":", moderation[i], ":", main.i[2]))
-                if(paste0(main.i[2], ":", main.i[1], ":", moderation[i]) %in% model.coef)
-                  coef = c(coef, paste0(main.i[2], ":", main.i[1], ":", moderation[i]))
-                if(paste0(main.i[2], ":", moderation[i], ":", main.i[1]) %in% model.coef)
-                  coef = c(coef, paste0(main.i[2], ":", moderation[i], ":", main.i[1]))
-                if(paste0(moderation[i], ":", main.i[1], ":", main.i[2]) %in% model.coef)
-                  coef = c(coef, paste0(moderation[i], ":", main.i[1], ":", main.i[2]))
-                if(paste0(moderation[i], ":", main.i[2], ":", main.i[1]) %in% model.coef)
-                  coef = c(coef, paste0(moderation[i], ":", main.i[2], ":", main.i[1]))
+            } else {
+              if(plot.effect == "TIE"){
+                y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
+              }
+              if(plot.effect == "PIE"){
+                y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
+                y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+              }
+              if(plot.effect == "TDE"){
+                y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
+              }
+              if(plot.effect == "PDE"){
+                y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
+                y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+              }
+              if(plot.effect == "INT"){
+                y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
+                y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+                y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
+              }
+            }
+            
+          }  
+          if(!is.null(comp.mod.values)){
+            if(is.null(plot.effect)){
+              if(is.U){
+                if("TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y1m1.dif = cbind(y1m1.dif, y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref[, b])
+                }
+                if("TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y1m0.dif = cbind(y1m0.dif, y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref[, b])
+                }
+                if("PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y0m0.dif = cbind(y0m0.dif, y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref[, b])
+                }
+                if("PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                  y0m1.dif = cbind(y0m1.dif, y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref[, b])
+                }
+              } else {
+                y1m1.dif = cbind(y1m1.dif, y1m1(predict.m.data.comp, predict.y.data.comp) - y1m1.ref[, b])
+                y1m0.dif = cbind(y1m0.dif, y1m0(predict.m.data.comp, predict.y.data.comp) - y1m0.ref[, b])
+                y0m0.dif = cbind(y0m0.dif, y0m0(predict.m.data.comp, predict.y.data.comp) - y0m0.ref[, b])
+                y0m1.dif = cbind(y0m1.dif, y0m1(predict.m.data.comp, predict.y.data.comp) - y0m1.ref[, b])
               }
             }
           }
         }
-        
-        main = c("Intercept", rep("", length(moderators[[1]])))
-        for(i in 1:length(predictors)){
-          main = c(main, predictors[i], rep("", length(moderators[[i + 1]])))
-        }
-        
-        coef[which(coef == "Intercept")] = "(Intercept)"
-        summary.table = as.data.frame(matrix(NA, length(main), 6))
-        summary.table[, 1] = main
-        summary.table[, 2] = moderation
-        summary.table[, 3:6] = as.data.frame(summary(l)$coefficients[coef, ])
-        mod_summary_sign = summary.table[, 6]  
-        mod_summary_stars = NA                             # Named vector with significance stars
-        mod_summary_stars[mod_summary_sign < 0.1] = "."
-        mod_summary_stars[mod_summary_sign < 0.05] = "*"
-        mod_summary_stars[mod_summary_sign < 0.01] = "**"
-        mod_summary_stars[mod_summary_sign < 0.001] = "***"
-        mod_summary_stars[is.na(mod_summary_stars)] = ""
-        summary.table = cbind(summary.table, mod_summary_stars)
-        colnames(summary.table) = c("main", "moderation", colnames(summary(l)$coefficients), "")
-        rownames(summary.table) = coef
-        return(summary.table)
       }
     }
     
-    summary.m = summary.table(m.moderators.new, m.predictors.new, l.m)
-    summary.y = summary.table(y.moderators.new, y.predictors.new, l.y)
+    if(is.null(plot.effect)){
+      if(is.U){
+        sens.results = NULL
+        if("TIE" %in% sens.effect){
+          TIE = apply(est.y1m1 - est.y1m0, 2, mean)
+          sens.results = cbind(sens.results, TIE)
+        }
+        if("PDE" %in% sens.effect){
+          PDE = apply(est.y1m0 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, PDE)
+        }
+        if("PIE" %in% sens.effect){
+          PIE = apply(est.y0m1 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, PIE)
+        }
+        if("TDE" %in% sens.effect){
+          TDE = apply(est.y1m1 - est.y0m1, 2, mean)
+          sens.results = cbind(sens.results, TDE)
+        }
+        if("INT" %in% sens.effect){
+          INT = apply(est.y1m1 - est.y1m0, 2, mean) - apply(est.y0m1 - est.y0m0, 2, mean)
+          sens.results = cbind(sens.results, INT)
+        }
+      } else {
+        TIE = apply(est.y1m1 - est.y1m0, 2, mean)
+        PDE = apply(est.y1m0 - est.y0m0, 2, mean)
+        PIE = apply(est.y0m1 - est.y0m0, 2, mean)
+        INT = TIE - PIE
+        TDE = PDE + INT
+        results = cbind(TIE, PIE, PDE, TDE, INT)
+      }
+    }
     
-    # Causal effects
-    summary.effects = cbind(est.results, se.results, ci.results[1, ], ci.results[2, ])
-    colnames(summary.effects) = c("Estimate", "Std. Error", paste(conf.level * 100, "% CI Lower ", (1-conf.level)/2 *100, "%", sep=""),
-                                  paste(conf.level * 100, "% CI Upper ", (1-conf.level)/2 *100, "%", sep=""))
+    if(!any(is.na(c(ref.mod.disc.values, ref.mod.cont.values)))){
+      if(is.null(confounders)|
+         m.scale == "continuous" & y.scale == "continuous"|
+         m.scale == "binary" & y.scale == "continuous" & !paste0(treatment, ":", mediator) %in% y.predictors){
+        if(!is.null(ref.mod.values)){
+          if(is.null(plot.effect)){
+            if(is.U){
+              if("TIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m1.ref = apply(y1m1.ref, 2, mean)
+              }
+              if("TIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m0.ref = apply(y1m0.ref, 2, mean)
+              }
+              if("PIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m0.ref = apply(y0m0.ref, 2, mean)
+              }
+              if("PIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m1.ref = apply(y0m1.ref, 2, mean)
+              }
+            } else {
+              TIE.ref = apply(y1m1.ref - y1m0.ref, 2, mean)
+              PDE.ref = apply(y1m0.ref - y0m0.ref, 2, mean)
+              PIE.ref = apply(y0m1.ref - y0m0.ref, 2, mean)
+              INT.ref = TIE.ref - PIE.ref
+              TDE.ref = PDE.ref + INT.ref
+            }
+          } else {
+            if(plot.effect == "TIE"){
+              results = apply(y1m1.ref - y1m0.ref, 2, mean)
+            }
+            if(plot.effect == "PIE"){
+              results = apply(y0m1.ref - y0m0.ref, 2, mean)
+            }
+            if(plot.effect == "TDE"){
+              results = apply(y1m1.ref - y0m1.ref, 2, mean)
+            }
+            if(plot.effect == "PDE"){
+              results = apply(y1m0.ref - y0m0.ref, 2, mean)
+            }
+            if(plot.effect == "INT"){
+              results = apply((y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref), 2, mean)
+            }
+          }
+        }  
+        if(!is.null(comp.mod.values)){
+          if(is.null(plot.effect)){
+            if(is.U){
+              if("TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m1.dif = apply(y1m1.dif, 2, mean)
+              }
+              if("TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y1m0.dif = apply(y1m0.dif, 2, mean)
+              }
+              if("PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m0.dif = apply(y0m0.dif, 2, mean)
+              }
+              if("PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+                y0m1.dif = apply(y0m1.dif, 2, mean)
+              }
+            } else {
+              TIE.dif = apply(y1m1.dif - y1m0.dif, 2, mean)
+              PDE.dif = apply(y1m0.dif - y0m0.dif, 2, mean)
+              PIE.dif = apply(y0m1.dif - y0m0.dif, 2, mean)
+              INT.dif = TIE.dif - PIE.dif
+              TDE.dif = PDE.dif + INT.dif
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  eff.earth.fun = function(effect = NULL, plot.effect = NULL, sens.effect = NULL){
+    if(!is.null(ref.mod.values)){
+      if(any(is.na(ref.mod.values))){
+        earth.moderators = colnames(model.matrix(as.formula(paste0("~", paste0(moderators[-which(is.na(ref.mod.values))], collapse = "+"))), data = data))[-1]
+      } else {
+        earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
+      }
+      earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
+      earth.ref = cbind(predict.m.data.ref, predict.y.data.ref)[1, earth.moderators]
+      ref.fun = function(x){
+        smooth = earth(earth.data, x)
+        ref = as.numeric(predict(smooth, earth.ref))
+        return(ref)
+      }
+      if(is.null(plot.effect)){
+        if(is.null(effect)){
+          if("TIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          }
+          if("TIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y1m0.ref = apply(est.y1m0, 2, ref.fun)
+          }
+          if("PIE.ref" %in% sens.effect|"PDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          }
+          if("PIE.ref" %in% sens.effect|"TDE.ref" %in% sens.effect|"INT.ref" %in% sens.effect|"PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y0m1.ref = apply(est.y0m1, 2, ref.fun)
+          }
+          results = NULL
+          if("TIE.ref" %in% sens.effect){
+            TIE.ref = y1m1.ref - y1m0.ref
+            results = cbind(results, TIE.ref)
+          }
+          if("PDE.ref" %in% sens.effect){
+            PDE.ref = y1m0.ref - y0m0.ref
+            results = cbind(results, PDE.ref)
+          }
+          if("PIE.ref" %in% sens.effect){
+            PIE.ref = y0m1.ref - y0m0.ref
+            results = cbind(results, PIE.ref)
+          }
+          if("TDE.ref" %in% sens.effect){
+            TDE.ref = y1m1.ref - y0m1.ref
+            results = cbind(results, TDE.ref)
+          }
+          if("INT.ref" %in% sens.effect){
+            INT.ref = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+            results = cbind(results, INT.ref)
+          }
+        } else {
+          y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          y1m0.ref = apply(est.y1m0, 2, ref.fun)
+          y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          y0m1.ref = apply(est.y0m1, 2, ref.fun)
+          TIE.ref = y1m1.ref - y1m0.ref
+          PDE.ref = y1m0.ref - y0m0.ref
+          PIE.ref = y0m1.ref - y0m0.ref
+          INT.ref = TIE.ref - PIE.ref
+          TDE.ref = PDE.ref + INT.ref
+          results = cbind(TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
+        }
+      } else {
+        if(plot.effect == "TIE"){
+          y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          y1m0.ref = apply(est.y1m0, 2, ref.fun)
+          results = y1m1.ref - y1m0.ref
+        }
+        if(plot.effect == "PIE"){
+          y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          y0m1.ref = apply(est.y0m1, 2, ref.fun)
+          results = y0m1.ref - y0m0.ref
+        }
+        if(plot.effect == "TDE"){
+          y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          y0m1.ref = apply(est.y0m1, 2, ref.fun)
+          results = y1m1.ref - y0m1.ref
+        }
+        if(plot.effect == "PDE"){
+          y1m0.ref = apply(est.y1m0, 2, ref.fun)
+          y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          results = y1m0.ref - y0m0.ref
+        }
+        if(plot.effect == "INT"){
+          y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          y1m0.ref = apply(est.y1m0, 2, ref.fun)
+          y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          y0m1.ref = apply(est.y0m1, 2, ref.fun)
+          results = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+        }
+        return(results)
+      }
+    }
     
-    args = as.list(match.call())[2:length(as.list(match.call()))]
-    args.full = mget(names(formals()), sys.frame(sys.nframe()))
-    
-    if(y.scale == "continuous")
-      return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
-    if(y.scale == "binary")
-      return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
+    if(is.null(plot.effect)){
+      if(!is.null(comp.mod.values)){
+        if(any(is.na(comp.mod.values))){
+          earth.moderators = colnames(model.matrix(as.formula(paste0("~", paste0(moderators[-which(is.na(comp.mod.values))], collapse = "+"))), data = data))[-1]
+        } else {
+          earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
+        }
+        earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
+        earth.comp = cbind(predict.m.data.comp, predict.y.data.comp)[1, earth.moderators]
+        comp.fun = function(x){
+          smooth = earth(earth.data, x)
+          comp = as.numeric(predict(smooth, earth.comp))
+          return(comp)
+        }
+        if(is.null(effect)){
+          if("TIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y1m1.dif = apply(est.y1m1, 2, comp.fun) - y1m1.ref
+          }
+          if("TIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y1m0.dif = apply(est.y1m0, 2, comp.fun) - y1m0.ref
+          }
+          if("PIE.dif" %in% sens.effect|"PDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y0m0.dif = apply(est.y0m0, 2, comp.fun) - y0m0.ref
+          }
+          if("PIE.dif" %in% sens.effect|"TDE.dif" %in% sens.effect|"INT.dif" %in% sens.effect){
+            y0m1.dif = apply(est.y0m1, 2, comp.fun) - y0m1.ref
+          }
+          if("TIE.dif" %in% sens.effect){
+            TIE.dif = y1m1.dif - y1m0.dif
+            results = cbind(results, TIE.dif)
+          }
+          if("PDE.dif" %in% sens.effect){
+            PDE.dif = y1m0.dif - y0m0.dif
+            results = cbind(results, PDE.dif)
+          }
+          if("PIE.dif" %in% sens.effect){
+            PIE.dif = y0m1.dif - y0m0.dif
+            results = cbind(results, PIE.dif)
+          }
+          if("TDE.dif" %in% sens.effect){
+            TDE.dif = y1m1.dif - y0m1.dif
+            results = cbind(results, TDE.dif)
+          }
+          if("INT.dif" %in% sens.effect){
+            INT.dif = (y1m1.dif - y1m0.dif) - (y0m1.dif - y0m0.dif)
+            results = cbind(results, INT.dif)
+          }
+        } else {
+          y1m1.dif = apply(est.y1m1, 2, comp.fun) - y1m1.ref
+          y1m0.dif = apply(est.y1m0, 2, comp.fun) - y1m0.ref
+          y0m0.dif = apply(est.y0m0, 2, comp.fun) - y0m0.ref
+          y0m1.dif = apply(est.y0m1, 2, comp.fun) - y0m1.ref
+          TIE.dif = y1m1.dif - y1m0.dif
+          PDE.dif = y1m0.dif - y0m0.dif
+          PIE.dif = y0m1.dif - y0m0.dif
+          INT.dif = TIE.dif - PIE.dif
+          TDE.dif = PDE.dif + INT.dif
+          results = cbind(results, TIE.dif, PIE.dif, PDE.dif, TDE.dif, INT.dif)
+        }
+      }
+    }
+    if(!is.null(effect))
+      return(results[, effect])
+    if(!is.null(sens.effect))
+      return(results)
+  }
+  
+  if(!any(is.na(c(ref.mod.disc.values, ref.mod.cont.values)))){
+    if(is.null(confounders)){
+      if(is.U){
+        if("TIE.ref" %in% sens.effect){
+          TIE.ref = y1m1.ref - y1m0.ref
+          sens.results = cbind(sens.results, TIE.ref)
+        }
+        if("PDE.ref" %in% sens.effect){
+          PDE.ref = y1m0.ref - y0m0.ref
+          sens.results = cbind(sens.results, PDE.ref)
+        }
+        if("PIE.ref" %in% sens.effect){
+          PIE.ref = y0m1.ref - y0m0.ref
+          sens.results = cbind(sens.results, PIE.ref)
+        }
+        if("TDE.ref" %in% sens.effect){
+          TDE.ref = y1m1.ref - y0m1.ref
+          sens.results = cbind(sens.results, TDE.ref)
+        }
+        if("INT.ref" %in% sens.effect){
+          INT.ref = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+          sens.results = cbind(sens.results, INT.ref)
+        }
+        if("TIE.dif" %in% sens.effect){
+          TIE.dif = y1m1.dif - y1m0.dif
+          sens.results = cbind(sens.results, TIE.dif)
+        }
+        if("PDE.dif" %in% sens.effect){
+          PDE.dif = y1m0.dif - y0m0.dif
+          sens.results = cbind(sens.results, PDE.dif)
+        }
+        if("PIE.dif" %in% sens.effect){
+          PIE.dif = y0m1.dif - y0m0.dif
+          sens.results = cbind(sens.results, PIE.dif)
+        }
+        if("TDE.dif" %in% sens.effect){
+          TDE.dif = y1m1.dif - y0m1.dif
+          sens.results = cbind(sens.results, TDE.dif)
+        }
+        if("INT.dif" %in% sens.effect){
+          INT.dif = (y1m1.dif - y1m0.dif) - (y0m1.dif - y0m0.dif)
+          sens.results = cbind(sens.results, INT.dif)
+        }
+      } else {
+        if(!is.null(ref.mod.values)){
+          if(!is.null(comp.mod.values)){
+            results = cbind(results, TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref, TIE.dif, PIE.dif, PDE.dif, TDE.dif, INT.dif)
+          } else {
+            if(is.null(plot.effect)){
+              results = cbind(results, TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
+            } else {
+              return(results)
+            }
+          }
+        }
+      }
+    } else if(m.scale == "continuous" & y.scale == "continuous"){
+      if(!paste0(treatment, ":", mediator) %in% y.predictors){
+        if(is.U){
+          if("TIE.ref" %in% sens.effect){
+            TIE.ref = y1m1.ref - y1m0.ref
+            sens.results = cbind(sens.results, TIE.ref)
+          }
+          if("PDE.ref" %in% sens.effect){
+            PDE.ref = y1m0.ref - y0m0.ref
+            sens.results = cbind(sens.results, PDE.ref)
+          }
+          if("PIE.ref" %in% sens.effect){
+            PIE.ref = y0m1.ref - y0m0.ref
+            sens.results = cbind(sens.results, PIE.ref)
+          }
+          if("TDE.ref" %in% sens.effect){
+            TDE.ref = y1m1.ref - y0m1.ref
+            sens.results = cbind(sens.results, TDE.ref)
+          }
+          if("INT.ref" %in% sens.effect){
+            INT.ref = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+            sens.results = cbind(sens.results, INT.ref)
+          }
+          if("TIE.dif" %in% sens.effect){
+            TIE.dif = y1m1.dif - y1m0.dif
+            sens.results = cbind(sens.results, TIE.dif)
+          }
+          if("PDE.dif" %in% sens.effect){
+            PDE.dif = y1m0.dif - y0m0.dif
+            sens.results = cbind(sens.results, PDE.dif)
+          }
+          if("PIE.dif" %in% sens.effect){
+            PIE.dif = y0m1.dif - y0m0.dif
+            sens.results = cbind(sens.results, PIE.dif)
+          }
+          if("TDE.dif" %in% sens.effect){
+            TDE.dif = y1m1.dif - y0m1.dif
+            sens.results = cbind(sens.results, TDE.dif)
+          }
+          if("INT.dif" %in% sens.effect){
+            INT.dif = (y1m1.dif - y1m0.dif) - (y0m1.dif - y0m0.dif)
+            sens.results = cbind(sens.results, INT.dif)
+          }
+        } else {
+          if(!is.null(ref.mod.values)){
+            if(!is.null(comp.mod.values)){
+              results = cbind(results, TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref, TIE.dif, PIE.dif, PDE.dif, TDE.dif, INT.dif)
+            } else {
+              if(is.null(plot.effect)){
+                results = cbind(results, TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
+              } else {
+                return(results)
+              }
+            }
+          }
+        }
+      } else {
+        if(is.U){
+          if("TIE.ref" %in% sens.effect){
+            TIE.ref = y1m1.ref - y1m0.ref
+            sens.results = cbind(sens.results, TIE.ref)
+          }
+          if("PIE.ref" %in% sens.effect){
+            PIE.ref = y0m1.ref - y0m0.ref
+            sens.results = cbind(sens.results, PIE.ref)
+          }
+          if("INT.ref" %in% sens.effect){
+            INT.ref = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+            sens.results = cbind(sens.results, INT.ref)
+          }
+          if("TIE.dif" %in% sens.effect){
+            TIE.dif = y1m1.dif - y1m0.dif
+            sens.results = cbind(sens.results, TIE.dif)
+          }
+          if("PIE.dif" %in% sens.effect){
+            PIE.dif = y0m1.dif - y0m0.dif
+            sens.results = cbind(sens.results, PIE.dif)
+          }
+          if("INT.dif" %in% sens.effect){
+            INT.dif = (y1m1.dif - y1m0.dif) - (y0m1.dif - y0m0.dif)
+            sens.results = cbind(sens.results, INT.dif)
+          }
+          if(any(sens.effect %in% c("TDE.ref", "PDE.ref", "TDE.dif", "PDE.dif"))){
+            if(any(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT", "TIE.ref", "PIE.ref", "INT.ref", "TIE.dif", "PIE.dif", "INT.dif"))){
+              sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect[-which(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT", "TIE.ref", "PIE.ref", "INT.ref", "TIE.dif", "PIE.dif", "INT.dif"))]))
+            } else {
+              sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect))
+            }
+          }
+        } else {
+          if(!is.null(ref.mod.values)){
+            if(!is.null(comp.mod.values)){
+              results = cbind(results, TIE.ref, PIE.ref, INT.ref, TIE.dif, PIE.dif, INT.dif, eff.earth.fun(effect = c("PDE.ref", "TDE.ref", "PDE.dif", "TDE.dif")))
+            } else {
+              if(is.null(plot.effect)){
+                results = cbind(results, TIE.ref, PIE.ref, INT.ref, eff.earth.fun(effect = c("PDE.ref", "TDE.ref")))
+              } else {
+                if(plot.effect == "TIE"|plot.effect == "PIE"|plot.effect == "INT"){
+                  return(results)
+                } else {
+                  return(eff.earth.fun(plot.effect = plot.effect))
+                }
+              }
+            }
+          }
+        }
+      }
+    } else if(m.scale == "binary" & y.scale == "continuous" & !paste0(treatment, ":", mediator) %in% y.predictors){
+      if(is.U){
+        if("PDE.ref" %in% sens.effect){
+          PDE.ref = y1m0.ref - y0m0.ref
+          sens.results = cbind(sens.results, PDE.ref)
+        }
+        if("TDE.ref" %in% sens.effect){
+          TDE.ref = y1m1.ref - y0m1.ref
+          sens.results = cbind(sens.results, TDE.ref)
+        }
+        if("INT.ref" %in% sens.effect){
+          INT.ref = (y1m1.ref - y1m0.ref) - (y0m1.ref - y0m0.ref)
+          sens.results = cbind(sens.results, INT.ref)
+        }
+        if("PDE.dif" %in% sens.effect){
+          PDE.dif = y1m0.dif - y0m0.dif
+          sens.results = cbind(sens.results, PDE.dif)
+        }
+        if("TDE.dif" %in% sens.effect){
+          TDE.dif = y1m1.dif - y0m1.dif
+          sens.results = cbind(sens.results, TDE.dif)
+        }
+        if("INT.dif" %in% sens.effect){
+          INT.dif = (y1m1.dif - y1m0.dif) - (y0m1.dif - y0m0.dif)
+          sens.results = cbind(sens.results, INT.dif)
+        }
+        if(any(sens.effect %in% c("TIE.ref", "PIE.ref", "TIE.dif", "PIE.dif"))){
+          if(any(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT", "TDE.ref", "PDE.ref", "INT.ref", "TDE.dif", "PDE.dif", "INT.dif"))){
+            sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect[-which(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT", "TDE.ref", "PDE.ref", "INT.ref", "TDE.dif", "PDE.dif", "INT.dif"))]))
+          } else {
+            sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect))
+          }
+        }
+      } else {
+        if(!is.null(ref.mod.values)){
+          if(!is.null(comp.mod.values)){
+            results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref", "TIE.dif", "PIE.dif")), PDE.ref, TDE.ref, INT.ref, PDE.dif, TDE.dif, INT.dif)
+          } else {
+            if(is.null(plot.effect)){
+              results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref")), PDE.ref, TDE.ref, INT.ref)
+            } else {
+              if(plot.effect == "TDE"|plot.effect == "PDE"|plot.effect == "INT"){
+                return(results)
+              } else {
+                return(eff.earth.fun(plot.effect = plot.effect))
+              }
+            }
+          }
+        }
+      }
+    } else {
+      if(is.U){
+        if(any(sens.effect %in% c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", "INT.dif"))){
+          if(any(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT"))){
+            sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect[-which(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT"))]))
+          } else {
+            sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect))
+          }
+        }
+      } else {
+        if(!is.null(ref.mod.values)){
+          if(!is.null(comp.mod.values)){
+            results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", "INT.dif")))
+          } else {
+            if(is.null(plot.effect)){
+              results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref")))
+            } else {
+              return(eff.earth.fun(plot.effect = plot.effect))
+            }
+          }
+        }
+      }
+    }
+  } else {
+    if(is.U){
+      if(any(sens.effect %in% c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", "INT.dif"))){
+        if(any(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT"))){
+          sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect[-which(sens.effect %in% c("TIE", "PIE", "TDE", "PDE", "INT"))]))
+        } else {
+          sens.results = cbind(sens.results, eff.earth.fun(sens.effect = sens.effect))
+        }
+      }
+    } else {
+      if(!is.null(ref.mod.values)){
+        if(!is.null(comp.mod.values)){
+          results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", "INT.dif")))
+        } else {
+          if(is.null(plot.effect)){
+            results = cbind(results, eff.earth.fun(effect = c("TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref")))
+          } else {
+            return(eff.earth.fun(plot.effect = plot.effect))
+          }
+        }
+      }
+    }
+  }
+  
+  if(is.null(plot.effect)){
+    if(is.U){
+      return(sens.results[, sens.effect])
+    } else {
+      # Step 5. Compute summary statistics such as point estimates and confidence intervals.
+      est.results = apply(results, 2, mean)
+      se.results = apply(results, 2, sd)
+      ci.results = apply(results, 2, quantile, probs = c((1 - conf.level)/2, (1 + conf.level)/2))
+      
+      # Output
+      # Mediator and outcome models
+      summary.table = function(moderators, predictors, l){
+        if(is.null(moderators)){
+          return(summary(l))
+        }
+        
+        if(!is.null(moderators)){
+          model.coef = names(coef(l))
+          
+          if(all(predictors %in% y.predictors.new) & all(y.predictors.new %in% predictors)){
+            if(paste0(treatment, ":", mediator) %in% model.coef)
+              predictors[which(predictors == paste0(treatment, ":", mediator))] = paste0(treatment, ":", mediator)
+            if(paste0(mediator, ":", treatment) %in% model.coef)
+              predictors[which(predictors == paste0(treatment, ":", mediator))] = paste0(mediator, ":", treatment)
+          }
+          
+          main = rep("Intercept", 1 + length(moderators[[1]]))
+          moderation = c("Intercept", moderators[[1]])
+          for(i in 1:length(predictors)){
+            moderation = c(moderation, "Intercept", moderators[[i + 1]])
+            main = c(main, rep(predictors[i], 1 + length(moderators[[i + 1]])))
+          }
+          
+          coef = NULL
+          for(i in 1:length(main)){
+            if(main[i] == "Intercept"){
+              coef = c(coef, paste0(moderation[i]))
+            } else {
+              if(moderation[i] == "Intercept"){
+                coef = c(coef, paste0(main[i]))
+              } else {
+                main.i = unlist(strsplit(main[i], ":"))
+                if(length(main.i) == 1){
+                  if(paste0(main[i], ":", moderation[i]) %in% model.coef)
+                    coef = c(coef, paste0(main[i], ":", moderation[i]))
+                  if(paste0(moderation[i], ":", main[i]) %in% model.coef)
+                    coef = c(coef, paste0(moderation[i], ":", main[i]))
+                }
+                if(length(main.i) == 2){
+                  if(paste0(main.i[1], ":", main.i[2], ":", moderation[i]) %in% model.coef)
+                    coef = c(coef, paste0(main.i[1], ":", main.i[2], ":", moderation[i]))
+                  if(paste0(main.i[1], ":", moderation[i], ":", main.i[2]) %in% model.coef)
+                    coef = c(coef, paste0(main.i[1], ":", moderation[i], ":", main.i[2]))
+                  if(paste0(main.i[2], ":", main.i[1], ":", moderation[i]) %in% model.coef)
+                    coef = c(coef, paste0(main.i[2], ":", main.i[1], ":", moderation[i]))
+                  if(paste0(main.i[2], ":", moderation[i], ":", main.i[1]) %in% model.coef)
+                    coef = c(coef, paste0(main.i[2], ":", moderation[i], ":", main.i[1]))
+                  if(paste0(moderation[i], ":", main.i[1], ":", main.i[2]) %in% model.coef)
+                    coef = c(coef, paste0(moderation[i], ":", main.i[1], ":", main.i[2]))
+                  if(paste0(moderation[i], ":", main.i[2], ":", main.i[1]) %in% model.coef)
+                    coef = c(coef, paste0(moderation[i], ":", main.i[2], ":", main.i[1]))
+                }
+              }
+            }
+          }
+          
+          main = c("Intercept", rep("", length(moderators[[1]])))
+          for(i in 1:length(predictors)){
+            main = c(main, predictors[i], rep("", length(moderators[[i + 1]])))
+          }
+          
+          coef[which(coef == "Intercept")] = "(Intercept)"
+          summary.table = as.data.frame(matrix(NA, length(main), 6))
+          summary.table[, 1] = main
+          summary.table[, 2] = moderation
+          summary.table[, 3:6] = as.data.frame(summary(l)$coefficients[coef, ])
+          mod_summary_sign = summary.table[, 6]  
+          mod_summary_stars = NA                             # Named vector with significance stars
+          mod_summary_stars[mod_summary_sign < 0.1] = "."
+          mod_summary_stars[mod_summary_sign < 0.05] = "*"
+          mod_summary_stars[mod_summary_sign < 0.01] = "**"
+          mod_summary_stars[mod_summary_sign < 0.001] = "***"
+          mod_summary_stars[is.na(mod_summary_stars)] = ""
+          summary.table = cbind(summary.table, mod_summary_stars)
+          colnames(summary.table) = c("main", "moderation", colnames(summary(l)$coefficients), "")
+          rownames(summary.table) = coef
+          return(summary.table)
+        }
+      }
+      
+      summary.m = summary.table(m.moderators.new, m.predictors.new, l.m)
+      summary.y = summary.table(y.moderators.new, y.predictors.new, l.y)
+      
+      # Causal effects
+      summary.effects = cbind(est.results, se.results, ci.results[1, ], ci.results[2, ])
+      colnames(summary.effects) = c("Estimate", "Std. Error", paste(conf.level * 100, "% CI Lower ", (1-conf.level)/2 *100, "%", sep=""),
+                                    paste(conf.level * 100, "% CI Upper ", (1-conf.level)/2 *100, "%", sep=""))
+      
+      args = as.list(match.call())[2:length(as.list(match.call()))]
+      args.full = mget(names(formals()), sys.frame(sys.nframe()))
+      
+      if(y.scale == "continuous")
+        return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
+      if(y.scale == "binary")
+        return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
+    }
   }
 }
 
@@ -1057,9 +1763,11 @@ modmed = function(
 #' @export
 #' @importFrom stats df.residual pf anova AIC getCall
 #' @examples
+#' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous", seed = 1) 
 #' summary_modmed(modmed.results)
+#' }
 
 summary_modmed = function(object){
   args = object$args
@@ -1137,6 +1845,7 @@ summary_modmed = function(object){
 #' @param other.mod.cont.values A vector of values of the other continuous moderators given which the conditional effect at each value of the specified moderator is estimated. The order of other.mod.cont.values should be the same as moderators.cont specified in the function of \code{modmed}, with the specified moderator removedif the specified moderator is continuous. If one does not want to condition some moderators on specific values, one may specify their values to be NA. NULL if there are no other continuous moderators.
 #' @param is.dist.moderator A logical value. "TRUE" if distribution of the specified moderator is to be plotted at the bottom, and "FALSE" if not. The default is "FALSE".
 #' @param probs A vector of percentiles to be plotted on the distribution of the moderator if the moderator is continuous. NULL if is.dist.moderator = FALSE. The default is c(0.1, 0.25, 0.5, 0.75, 0.9).
+#' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host.
 #' @return \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.
 #' @author Xu Qin and Lijuan Wang
 #' @references Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
@@ -1145,13 +1854,16 @@ summary_modmed = function(object){
 #' @importFrom cowplot plot_grid
 #' @importFrom scales pretty_breaks
 #' @importFrom stats density loess
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom parallel detectCores makeCluster stopCluster 
+#' @importFrom foreach foreach %dopar%
 #' @examples
 #' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous", seed = 1) 
 #' modmed.plot(modmed.results, effect = "TIE", moderator = "ADCPC", other.mod.disc.values = 1, is.dist.moderator = TRUE)
 #' }
-modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, other.mod.cont.values = NULL, is.dist.moderator = FALSE, probs = c(0.1, 0.25, 0.5, 0.75, 0.9)){
+modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, other.mod.cont.values = NULL, is.dist.moderator = FALSE, probs = c(0.1, 0.25, 0.5, 0.75, 0.9), ncore = detectCores()){
   dens.x = dens.y = qquant = NULL # Otherwise no visible binding for global variable
   
   if(!moderator %in% object$args.full$moderators.disc & !moderator %in% object$args.full$moderators.cont)
@@ -1186,65 +1898,90 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
     stop("If the specified moderator is discrete, its sample distribution will not be plotted.")
   }
   
-  args$comp.mod.disc.values = NULL
-  args$comp.mod.cont.values = NULL
+  cl = makeCluster(ncore)
+  registerDoSNOW(cl)
+  pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
+                      max = length(unique.moderator.values), # Maximum value of the progress bar
+                      style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                      # width = 50,   # Progress bar width. Defaults to getOption("width")
+                      char = "=")   # Character used to create the bar
+  progress = function(n) setTxtProgressBar(pb, n)
+  opts = list(progress = progress)
+  
   if(moderator.scale == "discrete")
     unique.moderator.values = as.character(unique(data[, moderator]))
   if(moderator.scale == "continuous")
     unique.moderator.values = seq(min(data[, moderator]), max(data[, moderator]), length.out = 15)
   
-  upd.moderators.values = function(moderators.disc.values, moderators.disc, moderators.cont.values, moderators.cont, new.values){
-    if(moderator.scale == "discrete"){
-      moderators.disc.values[which(moderators.disc == moderator)] = new.values
-      if(!is.null(other.mod.disc.values)){
-        if(sum(is.na(other.mod.disc.values)) > 0){
-          moderators.disc.values[which(moderators.disc != moderator)][-which(is.na(other.mod.disc.values))] = other.mod.disc.values[-which(is.na(other.mod.disc.values))]
-        } else {
-          moderators.disc.values[which(moderators.disc != moderator)] = other.mod.disc.values
+  res = foreach(i = 1:length(unique.moderator.values), .options.snow = opts) %dopar% {
+    args$comp.mod.disc.values = NULL
+    args$comp.mod.cont.values = NULL
+    if(moderator.scale == "discrete")
+      unique.moderator.values = as.character(unique(data[, moderator]))
+    if(moderator.scale == "continuous")
+      unique.moderator.values = seq(min(data[, moderator]), max(data[, moderator]), length.out = 15)
+    
+    upd.moderators.values = function(moderators.disc.values, moderators.disc, moderators.cont.values, moderators.cont, new.values){
+      if(moderator.scale == "discrete"){
+        moderators.disc.values[which(moderators.disc == moderator)] = new.values
+        if(!is.null(other.mod.disc.values)){
+          if(sum(is.na(other.mod.disc.values)) > 0){
+            moderators.disc.values[which(moderators.disc != moderator)][-which(is.na(other.mod.disc.values))] = other.mod.disc.values[-which(is.na(other.mod.disc.values))]
+          } else {
+            moderators.disc.values[which(moderators.disc != moderator)] = other.mod.disc.values
+          }
+        }
+        if(!is.null(other.mod.cont.values)){
+          if(sum(is.na(other.mod.cont.values)) > 0){
+            moderators.cont.values[-which(is.na(other.mod.cont.values))] = other.mod.cont.values[-which(is.na(other.mod.cont.values))]
+          } else {
+            moderators.cont.values = other.mod.cont.values
+          }
         }
       }
-      if(!is.null(other.mod.cont.values)){
-        if(sum(is.na(other.mod.cont.values)) > 0){
-          moderators.cont.values[-which(is.na(other.mod.cont.values))] = other.mod.cont.values[-which(is.na(other.mod.cont.values))]
-        } else {
-          moderators.cont.values = other.mod.cont.values
+      if(moderator.scale == "continuous"){
+        moderators.cont.values[which(moderators.cont == moderator)] = new.values
+        if(!is.null(other.mod.cont.values)){
+          if(sum(is.na(other.mod.cont.values)) > 0){
+            moderators.cont.values[which(moderators.cont != moderator)][-which(is.na(other.mod.cont.values))] = other.mod.cont.values[-which(is.na(other.mod.cont.values))]
+          } else {
+            moderators.cont.values[which(moderators.cont != moderator)] = other.mod.cont.values
+          }
+        }
+        if(!is.null(other.mod.disc.values)){
+          if(sum(is.na(other.mod.disc.values)) > 0){
+            moderators.disc.values[-which(is.na(other.mod.disc.values))] = other.mod.disc.values[-which(is.na(other.mod.disc.values))]
+          } else {
+            moderators.disc.values = other.mod.disc.values
+          }
         }
       }
+      return(list(moderators.disc.values = moderators.disc.values, moderators.cont.values = moderators.cont.values))
     }
-    if(moderator.scale == "continuous"){
-      moderators.cont.values[which(moderators.cont == moderator)] = new.values
-      if(!is.null(other.mod.cont.values)){
-        if(sum(is.na(other.mod.cont.values)) > 0){
-          moderators.cont.values[which(moderators.cont != moderator)][-which(is.na(other.mod.cont.values))] = other.mod.cont.values[-which(is.na(other.mod.cont.values))]
-        } else {
-          moderators.cont.values[which(moderators.cont != moderator)] = other.mod.cont.values
-        }
-      }
-      if(!is.null(other.mod.disc.values)){
-        if(sum(is.na(other.mod.disc.values)) > 0){
-          moderators.disc.values[-which(is.na(other.mod.disc.values))] = other.mod.disc.values[-which(is.na(other.mod.disc.values))]
-        } else {
-          moderators.disc.values = other.mod.disc.values
-        }
-      }
-    }
-    return(list(moderators.disc.values = moderators.disc.values, moderators.cont.values = moderators.cont.values))
+    
+    results = do.call(upd.moderators.values, list(moderators.disc.values = args$ref.mod.disc.values, moderators.disc = args$moderators.disc, moderators.cont.values = args$ref.mod.cont.values, moderators.cont = args$moderators.cont, new.values = unique.moderator.values[i]))
+    args$ref.mod.disc.values = results$moderators.disc.values
+    args$ref.mod.cont.values = results$moderators.cont.values
+    args$plot.effect = effect
+    est.effect = do.call(modmed, args)
+    moderator.values = rep(unique.moderator.values[i], length(est.effect))
+    CIL = rep(quantile(est.effect, probs = (1 - conf.level)/2), length(est.effect))
+    CIU = rep(quantile(est.effect, probs = (1 + conf.level)/2), length(est.effect))
+    return(cbind.data.frame(est.effect = est.effect, moderator.values = moderator.values, CIL = CIL, CIU = CIU))
   }
+  close(pb)
   
   est.effect = NULL
   moderator.values = NULL
   CIL = NULL
   CIU = NULL
   for(i in 1:length(unique.moderator.values)){
-    results = do.call(upd.moderators.values, list(moderators.disc.values = args$ref.mod.disc.values, moderators.disc = args$moderators.disc, moderators.cont.values = args$ref.mod.cont.values, moderators.cont = args$moderators.cont, new.values = unique.moderator.values[i]))
-    args$ref.mod.disc.values = results$moderators.disc.values
-    args$ref.mod.cont.values = results$moderators.cont.values
-    est = do.call(modmed, args)$results[, paste0(effect, ".ref")]
-    est.effect = c(est.effect, est)
-    moderator.values = c(moderator.values, rep(unique.moderator.values[i], length(est)))
-    CIL = c(CIL, rep(quantile(est, probs = (1 - conf.level)/2), length(est)))
-    CIU = c(CIU, rep(quantile(est, probs = (1 + conf.level)/2), length(est)))
+    est.effect = c(est.effect, res[[i]]$est.effect)
+    moderator.values = c(moderator.values, res[[i]]$moderator.values)
+    CIL = c(CIL, res[[i]]$CIL)
+    CIU = c(CIU, res[[i]]$CIU)
   }
+  
   if(moderator.scale == "discrete")
     results = cbind.data.frame(factor(moderator.values, levels = levels(data[, moderator]), ordered = TRUE), est.effect, CIL, CIU)
   if(moderator.scale == "continuous")
@@ -1433,15 +2170,16 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' Simulation-Based Sensitivity Analysis Table for Causal Moderated Mediation Analysis
 #' modmed.sens' is used to evaluate the sensitivity of the estimated causal effects obtained from \code{modmed} function to potential violations of the ignorability assumptions from the frequentist perspective. It estimates the causal effects after adjusting for an unmeasured pretreatment confounder, U, with a specified degree of confounding. In a randomized experiment, the degree of confounding is evaluated via two sensitivity parameters, the coefficient of U in the mediator model and that in the outcome model, given the specified prior distribution of U. When the treatment is not randomized, an additional sensitivity parameter is introduced -- the coefficient of U in the treatment model. The treatment, mediator, outcome, and unmeasured pretreatment confounder could be either binary or continuous. 
 #' @param object Output from the \code{modmed} function.
+#' @param sens.effect A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif"). 
 #' @param range.b.m The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized mediator model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the mediator. The lower bound is the negative of the upper bound. The default is NULL. 
 #' @param range.b.y The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized outcome model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the outcome. The lower bound is the negative of the upper bound. The default is NULL.
-#' @param grid.b.m The horizontal dimension of the grid. The default is 20. Increase the number for more smooth curves. 
-#' @param grid.b.y The vertical dimension of the grid. The default is 20. Increase the number for more smooth curves.
+#' @param grid.b.m The horizontal dimension of the grid. The default is 10. Increase the number for more smooth curves. 
+#' @param grid.b.y The vertical dimension of the grid. The default is 10. Increase the number for more smooth curves.
 #' @param U.scale The scale of the unobserved pretreatment confounder (string). Can be "continuous" or "binary". The default is "binary".
 #' @param p.u This needs to be specified only if U.scale = "binary". The prior probability of the unobserved pretreatment confounder if it is binary. The default is 0.5.
 #' @param sigma.u This needs to be specified only if U.scale = "continuous". The standard deviation of the prior distribution of the unobserved pretreatment confounder if it is continuous. The default is 1.
 #' @param t.rand TRUE if the treatment is randomized, and FALSE if not. The default is TRUE. 
-#' @param t.model A list. The default is NULL. This needs to be specified only if t.rand = FALSE because a treatment model is required for the derivation of the conditional distribution of the unmeasured pretreatment confounder. The names of the list must include intercept and the pretreatment covariates that are predictors but not moderators in the treatment model. The pretreatment covariates should be contained in the union of covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the treatment model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The moderators should be contained in the union of moderators.disc, and moderators.cont. 
+#' @param t.model A list. The default is NULL. This needs to be specified only if t.rand = FALSE because a treatment model is required for the derivation of the conditional distribution of the unmeasured pretreatment confounder. The names of the elements in t.model must include intercept and the pretreatment covariates that predict the treatment and are contained in the union of covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the treatment model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The moderators should be contained in the union of moderators.disc, and moderators.cont. A moderator in the mediator and outcome models does not necessarily moderate any coefficient in the treatment model. If it only has its main effect in the treatment model, it will be included in the vector of the intercept in t.model.
 #' @param t.scale The scale of the treatment (string). Can be "continuous" or "binary". The default is "binary".
 #' @param b.t This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.
 #' @param iter The number of iterations in the stochastic EM algorithm for generating the unobserved pretreatment confounder. The default is 10. 
@@ -1465,20 +2203,21 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' @examples
 #' \donttest{
 #' data(newws)
-#' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous", seed = 1) 
-#' sens.results = modmed.sens(modmed.results, U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
-#' sens.results = modmed.sens(modmed.results, U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"), emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
+#' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous") 
+#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
+#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"), emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
 #' }
-modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20, grid.b.y = 20, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = detectCores()){
+modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m = NULL, range.b.y = NULL, grid.b.m = 10, grid.b.y = 10, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = detectCores()){
+  if(any(!sens.effect %in% rownames(object$effects)))
+    stop("sens.effect must be a subvector of the effects in the output of modmed function.")
   args.full = object$args.full
   outcome = args.full$outcome
   t = treatment = args.full$treatment
   m = mediator = args.full$mediator
   y.scale = args.full$y.scale
   m.scale = args.full$m.scale
-  object = do.call(modmed, args.full)
-  args.full = object$args.full
   args.full$is.U = TRUE
+  args.full$sens.effect = sens.effect
   args.full$object = object
   m.moderators = object$m.moderators
   y.moderators = object$y.moderators
@@ -1499,7 +2238,7 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
     
     t.predictors = names(t.model)
     if(!"intercept" %in% t.predictors)
-      stop("The list names of t.model must include 'Intercept'.")  
+      stop("The element names in t.model must include 'Intercept'.")  
     t.predictors = t.predictors[-which(t.predictors == "intercept")]
     
     t.model = append(t.model[which(names(t.model) == "intercept")], t.model)
@@ -1509,17 +2248,17 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
     
     confounders = c(object$args.full$covariates.disc, object$args.full$covariates.cont)
     moderators = c(object$args.full$moderators.disc, object$args.full$moderators.cont)
+    if(!"intercept" %in% t.predictors)
+      stop("The element names in t.model must include 'Intercept'.")
     if(any(moderators %in% t.predictors)){
-      stop("The list names of t.model cannot include moderators. In other words, please do not include moderators in the main model.")
+      stop("The element names in t.model cannot include moderators. In other words, please do not include moderators in the main model.")
     } else {
       if(any(!t.predictors %in% confounders))
-        stop("The pretreatment covariates in the treatment model (i.e., the list names of t.model) should be contained in the union of covariates.disc and covariates.cont specified in modmed().")
+        stop("The pretreatment covariates that are not moderators in the treatment model (i.e., the element names that are not intercept in t.model) should be contained in the union of covariates.disc and covariates.cont specified in modmed().")
     }
     if(any(!t.moderators.ori %in% moderators))
       stop("The moderators in the treatment model should be contained in the union of moderators.disc and moderators.cont.")
     if(!all(is.null(unlist(t.moderators)))){
-      if(length(t.moderators[[which(names(t.moderators) == "intercept")]]) > length(unique(unlist(t.moderators[-which(names(t.moderators) == "intercept")]))))
-        stop("A moderator in t.model should not be only included in the intercept of the main model.")
       if(!all(unique(unlist(t.moderators[-which(names(t.moderators) == "intercept")])) %in% t.moderators[[which(names(t.moderators) == "intercept")]]))
         stop("The moderators of the intercept of t.model must include all the moderators in the treatment model.")
     }
@@ -2085,17 +2824,17 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
   
   # Initializes the progress bar
   pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
-                       max = nrow(grid), # Maximum value of the progress bar
-                       style = 3,    # Progress bar style (also available style = 1 and style = 2)
-                       # width = 50,   # Progress bar width. Defaults to getOption("width")
-                       char = "=")   # Character used to create the bar
+                      max = nrow(grid), # Maximum value of the progress bar
+                      style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                      # width = 50,   # Progress bar width. Defaults to getOption("width")
+                      char = "=")   # Character used to create the bar
   progress = function(n) setTxtProgressBar(pb, n)
   opts = list(progress = progress)
   
   resij = foreach(s = 1:nrow(grid), .options.snow = opts) %dopar% {
     i = grid[s, 1]
     j = grid[s, 2]
-    results = matrix(NA, nsim * args.full$nmc, nrow(object$effects))
+    results = matrix(NA, nsim * args.full$nmc, length(sens.effect))
     for(k in 1:nsim){
       args.full = args.full.ori
       args.full$b.m = b.m.all[i]
@@ -2138,7 +2877,7 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
       }
       results[(args.full$nmc * (k - 1) + 1):(args.full$nmc * k), ] = do.call(modmed, args.full)
     }
-    colnames(results) = rownames(object$effects)
+    colnames(results) = sens.effect
     return(c(apply(results, 2, mean), CIL = apply(results, 2, quantile, probs = c((1 - conf.level)/2)), CIU = apply(results, 2, quantile, probs = c((1 + conf.level)/2))))
   }
   close(pb)
@@ -2146,87 +2885,208 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
   vals = matrix(NA, grid.b.m, grid.b.y)
   rownames(vals) = round(b.m.all, 2)
   colnames(vals) = round(b.y.all, 2)
-  TIE.all = PIE.all = PDE.all = TDE.all = INT.all = CIL_TIE.all = CIL_PIE.all = CIL_PDE.all = CIL_TDE.all = CIL_INT.all = CIU_TIE.all = CIU_PIE.all = CIU_PDE.all = CIU_TDE.all = CIU_INT.all = vals
-  if(!is.null(c(args.full$ref.mod.disc.values, args.full$ref.mod.cont.values)))
-    TIE.ref.all = PIE.ref.all = PDE.ref.all = TDE.ref.all = INT.ref.all = CIL_TIE.ref.all = CIL_PIE.ref.all = CIL_PDE.ref.all = CIL_TDE.ref.all = CIL_INT.ref.all = CIU_TIE.ref.all = CIU_PIE.ref.all = CIU_PDE.ref.all = CIU_TDE.ref.all = CIU_INT.ref.all = vals
-  if(!is.null(c(args.full$comp.mod.disc.values, args.full$comp.mod.cont.values)))
-    TIE.dif.all = PIE.dif.all = PDE.dif.all = TDE.dif.all = INT.dif.all = CIL_TIE.dif.all = CIL_PIE.dif.all = CIL_PDE.dif.all = CIL_TDE.dif.all = CIL_INT.dif.all = CIU_TIE.dif.all = CIU_PIE.dif.all = CIU_PDE.dif.all = CIU_TDE.dif.all = CIU_INT.dif.all = vals
+  if("TIE" %in% sens.effect){
+    TIE.all = CIL_TIE.all = CIU_TIE.all = vals
+  }
+  if("PDE" %in% sens.effect){
+    PDE.all = CIL_PDE.all = CIU_PDE.all = vals
+  }
+  if("PIE" %in% sens.effect){
+    PIE.all = CIL_PIE.all = CIU_PIE.all = vals
+  }
+  if("TDE" %in% sens.effect){
+    TDE.all = CIL_TDE.all = CIU_TDE.all = vals
+  }
+  if("INT" %in% sens.effect){
+    INT.all = CIL_INT.all = CIU_INT.all = vals
+  }
+  if("TIE.ref" %in% sens.effect){
+    TIE.ref.all = CIL_TIE.ref.all = CIU_TIE.ref.all = vals
+  }
+  if("PDE.ref" %in% sens.effect){
+    PDE.ref.all = CIL_PDE.ref.all = CIU_PDE.ref.all = vals
+  }
+  if("PIE.ref" %in% sens.effect){
+    PIE.ref.all = CIL_PIE.ref.all = CIU_PIE.ref.all = vals
+  }
+  if("TDE.ref" %in% sens.effect){
+    TDE.ref.all = CIL_TDE.ref.all = CIU_TDE.ref.all = vals
+  }
+  if("INT.ref" %in% sens.effect){
+    INT.ref.all = CIL_INT.ref.all = CIU_INT.ref.all = vals
+  }
+  if("TIE.dif" %in% sens.effect){
+    TIE.dif.all = CIL_TIE.dif.all = CIU_TIE.dif.all = vals
+  }
+  if("PDE.dif" %in% sens.effect){
+    PDE.dif.all = CIL_PDE.dif.all = CIU_PDE.dif.all = vals
+  }
+  if("PIE.dif" %in% sens.effect){
+    PIE.dif.all = CIL_PIE.dif.all = CIU_PIE.dif.all = vals
+  }
+  if("TDE.dif" %in% sens.effect){
+    TDE.dif.all = CIL_TDE.dif.all = CIU_TDE.dif.all = vals
+  }
+  if("INT.dif" %in% sens.effect){
+    INT.dif.all = CIL_INT.dif.all = CIU_INT.dif.all = vals
+  }
   
   for(s in 1:nrow(grid)){
     i = grid[s, 1]
     j = grid[s, 2]
-    TIE.all[i, j] = resij[[s]]["TIE"]
-    PIE.all[i, j] = resij[[s]]["PIE"]
-    PDE.all[i, j] = resij[[s]]["PDE"]
-    TDE.all[i, j] = resij[[s]]["TDE"]
-    INT.all[i, j] = resij[[s]]["INT"]
-    CIL_TIE.all[i, j] = resij[[s]]["CIL.TIE"]
-    CIL_PIE.all[i, j] = resij[[s]]["CIL.PIE"]
-    CIL_PDE.all[i, j] = resij[[s]]["CIL.PDE"]
-    CIL_TDE.all[i, j] = resij[[s]]["CIL.TDE"]
-    CIL_INT.all[i, j] = resij[[s]]["CIL.INT"]
-    CIU_TIE.all[i, j] = resij[[s]]["CIU.TIE"]
-    CIU_PIE.all[i, j] = resij[[s]]["CIU.PIE"]
-    CIU_PDE.all[i, j] = resij[[s]]["CIU.PDE"]
-    CIU_TDE.all[i, j] = resij[[s]]["CIU.TDE"]
-    CIU_INT.all[i, j] = resij[[s]]["CIU.INT"]
-    if(!is.null(c(args.full$ref.mod.disc.values, args.full$ref.mod.cont.values))){
+    
+    if("TIE" %in% sens.effect){
+      TIE.all[i, j] = resij[[s]]["TIE"]
+      CIL_TIE.all[i, j] = resij[[s]]["CIL.TIE"]
+      CIU_TIE.all[i, j] = resij[[s]]["CIU.TIE"]
+    }
+    if("PIE" %in% sens.effect){
+      PIE.all[i, j] = resij[[s]]["PIE"]
+      CIL_PIE.all[i, j] = resij[[s]]["CIL.PIE"]
+      CIU_PIE.all[i, j] = resij[[s]]["CIU.PIE"]
+    }
+    if("PDE" %in% sens.effect){
+      PDE.all[i, j] = resij[[s]]["PDE"]
+      CIL_PDE.all[i, j] = resij[[s]]["CIL.PDE"]
+      CIU_PDE.all[i, j] = resij[[s]]["CIU.PDE"]
+    }
+    if("TDE" %in% sens.effect){
+      TDE.all[i, j] = resij[[s]]["TDE"]
+      CIL_TDE.all[i, j] = resij[[s]]["CIL.TDE"]
+      CIU_TDE.all[i, j] = resij[[s]]["CIU.TDE"]
+    }
+    if("INT" %in% sens.effect){
+      INT.all[i, j] = resij[[s]]["INT"]
+      CIL_INT.all[i, j] = resij[[s]]["CIL.INT"]
+      CIU_INT.all[i, j] = resij[[s]]["CIU.INT"]
+    }
+    if("TIE.ref" %in% sens.effect){
       TIE.ref.all[i, j] = resij[[s]]["TIE.ref"]
-      PIE.ref.all[i, j] = resij[[s]]["PIE.ref"]
-      PDE.ref.all[i, j] = resij[[s]]["PDE.ref"]
-      TDE.ref.all[i, j] = resij[[s]]["TDE.ref"]
-      INT.ref.all[i, j] = resij[[s]]["INT.ref"]
       CIL_TIE.ref.all[i, j] = resij[[s]]["CIL.TIE.ref"]
-      CIL_PIE.ref.all[i, j] = resij[[s]]["CIL.PIE.ref"]
-      CIL_PDE.ref.all[i, j] = resij[[s]]["CIL.PDE.ref"]
-      CIL_TDE.ref.all[i, j] = resij[[s]]["CIL.TDE.ref"]
-      CIL_INT.ref.all[i, j] = resij[[s]]["CIL.INT.ref"]
       CIU_TIE.ref.all[i, j] = resij[[s]]["CIU.TIE.ref"]
+    }
+    if("PIE.ref" %in% sens.effect){
+      PIE.ref.all[i, j] = resij[[s]]["PIE.ref"]
+      CIL_PIE.ref.all[i, j] = resij[[s]]["CIL.PIE.ref"]
       CIU_PIE.ref.all[i, j] = resij[[s]]["CIU.PIE.ref"]
+    }
+    if("PDE.ref" %in% sens.effect){
+      PDE.ref.all[i, j] = resij[[s]]["PDE.ref"]
+      CIL_PDE.ref.all[i, j] = resij[[s]]["CIL.PDE.ref"]
       CIU_PDE.ref.all[i, j] = resij[[s]]["CIU.PDE.ref"]
+    }
+    if("TDE.ref" %in% sens.effect){
+      TDE.ref.all[i, j] = resij[[s]]["TDE.ref"]
+      CIL_TDE.ref.all[i, j] = resij[[s]]["CIL.TDE.ref"]
       CIU_TDE.ref.all[i, j] = resij[[s]]["CIU.TDE.ref"]
+    }
+    if("INT.ref" %in% sens.effect){
+      INT.ref.all[i, j] = resij[[s]]["INT.ref"]
+      CIL_INT.ref.all[i, j] = resij[[s]]["CIL.INT.ref"]
       CIU_INT.ref.all[i, j] = resij[[s]]["CIU.INT.ref"]
     }
-    if(!is.null(c(args.full$comp.mod.disc.values, args.full$comp.mod.cont.values))){
+    if("TIE.dif" %in% sens.effect){
       TIE.dif.all[i, j] = resij[[s]]["TIE.dif"]
-      PIE.dif.all[i, j] = resij[[s]]["PIE.dif"]
-      PDE.dif.all[i, j] = resij[[s]]["PDE.dif"]
-      TDE.dif.all[i, j] = resij[[s]]["TDE.dif"]
-      INT.dif.all[i, j] = resij[[s]]["INT.dif"]
       CIL_TIE.dif.all[i, j] = resij[[s]]["CIL.TIE.dif"]
-      CIL_PIE.dif.all[i, j] = resij[[s]]["CIL.PIE.dif"]
-      CIL_PDE.dif.all[i, j] = resij[[s]]["CIL.PDE.dif"]
-      CIL_TDE.dif.all[i, j] = resij[[s]]["CIL.TDE.dif"]
-      CIL_INT.dif.all[i, j] = resij[[s]]["CIL.INT.dif"]
       CIU_TIE.dif.all[i, j] = resij[[s]]["CIU.TIE.dif"]
+    }
+    if("PIE.dif" %in% sens.effect){
+      PIE.dif.all[i, j] = resij[[s]]["PIE.dif"]
+      CIL_PIE.dif.all[i, j] = resij[[s]]["CIL.PIE.dif"]
       CIU_PIE.dif.all[i, j] = resij[[s]]["CIU.PIE.dif"]
+    }
+    if("PDE.dif" %in% sens.effect){
+      PDE.dif.all[i, j] = resij[[s]]["PDE.dif"]
+      CIL_PDE.dif.all[i, j] = resij[[s]]["CIL.PDE.dif"]
       CIU_PDE.dif.all[i, j] = resij[[s]]["CIU.PDE.dif"]
+    }
+    if("TDE.dif" %in% sens.effect){
+      TDE.dif.all[i, j] = resij[[s]]["TDE.dif"]
+      CIL_TDE.dif.all[i, j] = resij[[s]]["CIL.TDE.dif"]
       CIU_TDE.dif.all[i, j] = resij[[s]]["CIU.TDE.dif"]
+    }
+    if("INT.dif" %in% sens.effect){
+      INT.dif.all[i, j] = resij[[s]]["INT.dif"]
+      CIL_INT.dif.all[i, j] = resij[[s]]["CIL.INT.dif"]
       CIU_INT.dif.all[i, j] = resij[[s]]["CIU.INT.dif"]
     }
   }
   
-  results.new = list(TIE = TIE.all, PIE = PIE.all, PDE = PDE.all, TDE = TDE.all, INT = INT.all, 
-                     CIL_TIE = CIL_TIE.all, CIL_PIE = CIL_PIE.all, CIL_PDE = CIL_PDE.all, CIL_TDE = CIL_TDE.all, CIL_INT = CIL_INT.all, 
-                     CIU_TIE = CIU_TIE.all, CIU_PIE = CIU_PIE.all, CIU_PDE = CIU_PDE.all, CIU_TDE = CIU_TDE.all, CIU_INT = CIU_INT.all)
-  if(!is.null(c(args.full$ref.mod.disc.values, args.full$ref.mod.cont.values))){
-    results.new = list(TIE = TIE.all, PIE = PIE.all, PDE = PDE.all, TDE = TDE.all, INT = INT.all, 
-                       TIE.ref = TIE.ref.all, PIE.ref = PIE.ref.all, PDE.ref = PDE.ref.all, TDE.ref = TDE.ref.all, INT.ref = INT.ref.all, 
-                       CIL_TIE = CIL_TIE.all, CIL_PIE = CIL_PIE.all, CIL_PDE = CIL_PDE.all, CIL_TDE = CIL_TDE.all, CIL_INT = CIL_INT.all, 
-                       CIL_TIE.ref = CIL_TIE.ref.all, CIL_PIE.ref = CIL_PIE.ref.all, CIL_PDE.ref = CIL_PDE.ref.all, CIL_TDE.ref = CIL_TDE.ref.all, CIL_INT.ref = CIL_INT.ref.all, 
-                       CIU_TIE = CIU_TIE.all, CIU_PIE = CIU_PIE.all, CIU_PDE = CIU_PDE.all, CIU_TDE = CIU_TDE.all, CIU_INT = CIU_INT.all, 
-                       CIU_TIE.ref = CIU_TIE.ref.all, CIU_PIE.ref = CIU_PIE.ref.all, CIU_PDE.ref = CIU_PDE.ref.all, CIU_TDE.ref = CIU_TDE.ref.all, CIU_INT.ref = CIU_INT.ref.all)
+  results.new = NULL
+  if("TIE" %in% sens.effect){
+    results.new[["TIE"]] = TIE.all
+    results.new[["CIL.TIE"]] = CIL_TIE.all
+    results.new[["CIU.TIE"]] = CIU_TIE.all
   }
-  if(!is.null(c(args.full$comp.mod.disc.values, args.full$comp.mod.cont.values))){
-    results.new = list(TIE = TIE.all, PIE = PIE.all, PDE = PDE.all, TDE = TDE.all, INT = INT.all, 
-                       TIE.ref = TIE.ref.all, PIE.ref = PIE.ref.all, PDE.ref = PDE.ref.all, TDE.ref = TDE.ref.all, INT.ref = INT.ref.all, 
-                       TIE.dif = TIE.dif.all, PIE.dif = PIE.dif.all, PDE.dif = PDE.dif.all, TDE.dif = TDE.dif.all, INT.dif = INT.dif.all, 
-                       CIL_TIE = CIL_TIE.all, CIL_PIE = CIL_PIE.all, CIL_PDE = CIL_PDE.all, CIL_TDE = CIL_TDE.all, CIL_INT = CIL_INT.all, 
-                       CIL_TIE.ref = CIL_TIE.ref.all, CIL_PIE.ref = CIL_PIE.ref.all, CIL_PDE.ref = CIL_PDE.ref.all, CIL_TDE.ref = CIL_TDE.ref.all, CIL_INT.ref = CIL_INT.ref.all, 
-                       CIL_TIE.dif = CIL_TIE.dif.all, CIL_PIE.dif = CIL_PIE.dif.all, CIL_PDE.dif = CIL_PDE.dif.all, CIL_TDE.dif = CIL_TDE.dif.all, CIL_INT.dif = CIL_INT.dif.all, 
-                       CIU_TIE = CIU_TIE.all, CIU_PIE = CIU_PIE.all, CIU_PDE = CIU_PDE.all, CIU_TDE = CIU_TDE.all, CIU_INT = CIU_INT.all, 
-                       CIU_TIE.ref = CIU_TIE.ref.all, CIU_PIE.ref = CIU_PIE.ref.all, CIU_PDE.ref = CIU_PDE.ref.all, CIU_TDE.ref = CIU_TDE.ref.all, CIU_INT.ref = CIU_INT.ref.all, 
-                       CIU_TIE.dif = CIU_TIE.dif.all, CIU_PIE.dif = CIU_PIE.dif.all, CIU_PDE.dif = CIU_PDE.dif.all, CIU_TDE.dif = CIU_TDE.dif.all, CIU_INT.dif = CIU_INT.dif.all)
+  if("PIE" %in% sens.effect){
+    results.new[["PIE"]] = PIE.all
+    results.new[["CIL.PIE"]] = CIL_PIE.all
+    results.new[["CIU.PIE"]] = CIU_PIE.all
+  }
+  if("PDE" %in% sens.effect){
+    results.new[["PDE"]] = PDE.all
+    results.new[["CIL.PDE"]] = CIL_PDE.all
+    results.new[["CIU.PDE"]] = CIU_PDE.all
+  }
+  if("TDE" %in% sens.effect){
+    results.new[["TDE"]] = TDE.all
+    results.new[["CIL.TDE"]] = CIL_TDE.all
+    results.new[["CIU.TDE"]] = CIU_TDE.all
+  }
+  if("INT" %in% sens.effect){
+    results.new[["INT"]] = INT.all
+    results.new[["CIL.INT"]] = CIL_INT.all
+    results.new[["CIU.INT"]] = CIU_INT.all
+  }
+  if("TIE.ref" %in% sens.effect){
+    results.new[["TIE.ref"]] = TIE.ref.all
+    results.new[["CIL.TIE.ref"]] = CIL_TIE.ref.all
+    results.new[["CIU.TIE.ref"]] = CIU_TIE.ref.all
+  }
+  if("PIE.ref" %in% sens.effect){
+    results.new[["PIE.ref"]] = PIE.ref.all
+    results.new[["CIL.PIE.ref"]] = CIL_PIE.ref.all
+    results.new[["CIU.PIE.ref"]] = CIU_PIE.ref.all
+  }
+  if("PDE.ref" %in% sens.effect){
+    results.new[["PDE.ref"]] = PDE.ref.all
+    results.new[["CIL.PDE.ref"]] = CIL_PDE.ref.all
+    results.new[["CIU.PDE.ref"]] = CIU_PDE.ref.all
+  }
+  if("TDE.ref" %in% sens.effect){
+    results.new[["TDE.ref"]] = TDE.ref.all
+    results.new[["CIL.TDE.ref"]] = CIL_TDE.ref.all
+    results.new[["CIU.TDE.ref"]] = CIU_TDE.ref.all
+  }
+  if("INT.ref" %in% sens.effect){
+    results.new[["INT.ref"]] = INT.ref.all
+    results.new[["CIL.INT.ref"]] = CIL_INT.ref.all
+    results.new[["CIU.INT.ref"]] = CIU_INT.ref.all
+  }
+  if("TIE.dif" %in% sens.effect){
+    results.new[["TIE.dif"]] = TIE.dif.all
+    results.new[["CIL.TIE.dif"]] = CIL_TIE.dif.all
+    results.new[["CIU.TIE.dif"]] = CIU_TIE.dif.all
+  }
+  if("PIE.dif" %in% sens.effect){
+    results.new[["PIE.dif"]] = PIE.dif.all
+    results.new[["CIL.PIE.dif"]] = CIL_PIE.dif.all
+    results.new[["CIU.PIE.dif"]] = CIU_PIE.dif.all
+  }
+  if("PDE.dif" %in% sens.effect){
+    results.new[["PDE.dif"]] = PDE.dif.all
+    results.new[["CIL.PDE.dif"]] = CIL_PDE.dif.all
+    results.new[["CIU.PDE.dif"]] = CIU_PDE.dif.all
+  }
+  if("TDE.dif" %in% sens.effect){
+    results.new[["TDE.dif"]] = TDE.dif.all
+    results.new[["CIL.TDE.dif"]] = CIL_TDE.dif.all
+    results.new[["CIU.TDE.dif"]] = CIU_TDE.dif.all
+  }
+  if("INT.dif" %in% sens.effect){
+    results.new[["INT.dif"]] = INT.dif.all
+    results.new[["CIL.INT.dif"]] = CIL_INT.dif.all
+    results.new[["CIU.INT.dif"]] = CIU_INT.dif.all
   }
   
   stopCluster(cl)
@@ -2237,7 +3097,7 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
 #' Simulation-Based Sensitivity Analysis Plot for Causal Moderated Mediation Analysis
 #' @param object Output from the \code{modmed} function.
 #' @param sens.results An output from the \code{modmed.sens} function.
-#' @param effect The name of the effect whose sensitivity analysis results are to be plotted (string). effect can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".
+#' @param effect The name of the effect whose sensitivity analysis results are to be plotted (string). Only one effect is plotted at a time. It can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif". It must be included in sens.effect when running the \code{modmed.sens} function.
 #' @return Sensitivity analysis plots for the causal effects in the causal moderated mediation analysis.
 #' @author Xu Qin and Fan Yang
 #' @references Qin, X., & Yang, F. (2020). Simulation-Based Sensitivity Analysis for Causal Mediation Studies.
@@ -2254,6 +3114,8 @@ modmed.sens = function(object, range.b.m = NULL, range.b.y = NULL, grid.b.m = 20
 #' }
 sens.plot = function(object, sens.results, effect){
   args.full = object$args.full
+  if(!effect %in% names(sens.results$results.new))
+    stop("effect must be included in sens.effect of the modmed.sens function.")
   m.scale = args.full$m.scale
   y.scale = args.full$y.scale
   
@@ -2282,19 +3144,19 @@ sens.plot = function(object, sens.results, effect){
   colnames(smooth.effect) = colnames(sens.results$results.new[[effect]])
   rownames(smooth.effect) = rownames(sens.results$results.new[[effect]])
   
-  a = melt(sens.results$results.new[[paste0("CIL_", effect)]])
+  a = melt(sens.results$results.new[[paste0("CIL.", effect)]])
   b = loess(value ~ Var1 + Var2, data = a, span = 0.8) # higher values of span will deliver more smoothing
   smooth.effect.CIL = predict(b, newdata = data.frame(Var1 = a$Var1, Var2 = a$Var2)) # estimate the smoothed values on our grid
-  smooth.effect.CIL = array(smooth.effect.CIL, dim = dim(sens.results$results.new[[paste0("CIL_", effect)]]))
-  colnames(smooth.effect.CIL) = colnames(sens.results$results.new[[paste0("CIL_", effect)]])
-  rownames(smooth.effect.CIL) = rownames(sens.results$results.new[[paste0("CIL_", effect)]])
+  smooth.effect.CIL = array(smooth.effect.CIL, dim = dim(sens.results$results.new[[paste0("CIL.", effect)]]))
+  colnames(smooth.effect.CIL) = colnames(sens.results$results.new[[paste0("CIL.", effect)]])
+  rownames(smooth.effect.CIL) = rownames(sens.results$results.new[[paste0("CIL.", effect)]])
   
-  a = melt(sens.results$results.new[[paste0("CIU_", effect)]])
+  a = melt(sens.results$results.new[[paste0("CIU.", effect)]])
   b = loess(value ~ Var1 + Var2, data = a, span = 0.8) # higher values of span will deliver more smoothing
   smooth.effect.CIU = predict(b, newdata = data.frame(Var1 = a$Var1, Var2 = a$Var2)) # estimate the smoothed values on our grid
-  smooth.effect.CIU = array(smooth.effect.CIU, dim = dim(sens.results$results.new[[paste0("CIU_", effect)]]))
-  colnames(smooth.effect.CIU) = colnames(sens.results$results.new[[paste0("CIU_", effect)]])
-  rownames(smooth.effect.CIU) = rownames(sens.results$results.new[[paste0("CIU_", effect)]])
+  smooth.effect.CIU = array(smooth.effect.CIU, dim = dim(sens.results$results.new[[paste0("CIU.", effect)]]))
+  colnames(smooth.effect.CIU) = colnames(sens.results$results.new[[paste0("CIU.", effect)]])
+  rownames(smooth.effect.CIU) = rownames(sens.results$results.new[[paste0("CIU.", effect)]])
   
   contour(sens.results$b.m.all, sens.results$b.y.all, smooth.effect, add = T, labcex = 1)
   # Add curves that represent the contour along which the treatment effect estimate is reduced to zero

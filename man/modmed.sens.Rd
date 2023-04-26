@@ -7,10 +7,11 @@ modmed.sens' is used to evaluate the sensitivity of the estimated causal effects
 \usage{
 modmed.sens(
   object,
+  sens.effect = rownames(object$effects),
   range.b.m = NULL,
   range.b.y = NULL,
-  grid.b.m = 20,
-  grid.b.y = 20,
+  grid.b.m = 10,
+  grid.b.y = 10,
   U.scale = "binary",
   p.u = 0.5,
   sigma.u = 1,
@@ -26,13 +27,15 @@ modmed.sens(
 \arguments{
 \item{object}{Output from the \code{modmed} function.}
 
+\item{sens.effect}{A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif").}
+
 \item{range.b.m}{The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized mediator model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the mediator. The lower bound is the negative of the upper bound. The default is NULL.}
 
 \item{range.b.y}{The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized outcome model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the outcome. The lower bound is the negative of the upper bound. The default is NULL.}
 
-\item{grid.b.m}{The horizontal dimension of the grid. The default is 20. Increase the number for more smooth curves.}
+\item{grid.b.m}{The horizontal dimension of the grid. The default is 10. Increase the number for more smooth curves.}
 
-\item{grid.b.y}{The vertical dimension of the grid. The default is 20. Increase the number for more smooth curves.}
+\item{grid.b.y}{The vertical dimension of the grid. The default is 10. Increase the number for more smooth curves.}
 
 \item{U.scale}{The scale of the unobserved pretreatment confounder (string). Can be "continuous" or "binary". The default is "binary".}
 
@@ -42,7 +45,7 @@ modmed.sens(
 
 \item{t.rand}{TRUE if the treatment is randomized, and FALSE if not. The default is TRUE.}
 
-\item{t.model}{A list. The default is NULL. This needs to be specified only if t.rand = FALSE because a treatment model is required for the derivation of the conditional distribution of the unmeasured pretreatment confounder. The names of the list must include intercept and the pretreatment covariates that are predictors but not moderators in the treatment model. The pretreatment covariates should be contained in the union of covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the treatment model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The moderators should be contained in the union of moderators.disc, and moderators.cont.}
+\item{t.model}{A list. The default is NULL. This needs to be specified only if t.rand = FALSE because a treatment model is required for the derivation of the conditional distribution of the unmeasured pretreatment confounder. The names of the elements in t.model must include intercept and the pretreatment covariates that predict the treatment and are contained in the union of covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the treatment model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The moderators should be contained in the union of moderators.disc, and moderators.cont. A moderator in the mediator and outcome models does not necessarily moderate any coefficient in the treatment model. If it only has its main effect in the treatment model, it will be included in the vector of the intercept in t.model.}
 
 \item{t.scale}{The scale of the treatment (string). Can be "continuous" or "binary". The default is "binary".}
 
@@ -71,25 +74,24 @@ modmed.sens' is used to evaluate the sensitivity of the estimated causal effects
 data(newws)
 modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     outcome = "depression", covariates.disc = c("emp_prior", "nevmar",
-        "hispanic", "nohsdip"), covariates.cont = c("workpref",
-        "attitude", "depress_prior"), moderators.disc = "CHCNT",
-    moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC",
-        "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL,
-        nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL,
-        attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC",
-        "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC",
-        "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL,
-        hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL,
-        depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2,
-    comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary",
-    y.scale = "continuous", seed = 1)
-sens.results = modmed.sens(modmed.results, U.scale = "binary",
-    grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
-sens.results = modmed.sens(modmed.results, U.scale = "binary",
-    t.model = list(intercept = c("ADCPC", "CHCNT"), emp_prior = "ADCPC",
-        nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL, workpref = NULL,
-        attitude = NULL, depress_prior = NULL), grid.b.m = 2, grid.b.y = 2,
-    iter = 2, nsim = 2, ncore = 1)
+        "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude",
+        "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC",
+    m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC",
+        "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL,
+        nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL),
+    y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC",
+        "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC",
+        "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL,
+        nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL),
+    comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
+    ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous")
+sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref",
+    U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
+sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref",
+    U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"),
+        emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL,
+        workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2,
+    grid.b.y = 2, iter = 2, nsim = 2)
 }
 }
 \references{
