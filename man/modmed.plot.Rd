@@ -2,8 +2,7 @@
 % Please edit documentation in R/moderate.mediation.R
 \name{modmed.plot}
 \alias{modmed.plot}
-\title{Visual Representation of the Causal Moderated Mediation Analysis Results
-'modmed.plot' is used to visualize results from \code{modmed} function. This applies only if moderators.disc or moderators.cont is not NULL. The plot consists of two parts. The top represents the sampling distribution of the specified causal effect as a function of the specified moderator within the given levels of the other moderators. The bottom represents the distribution of the specified moderator on the x axis.}
+\title{Visual Representation of the Causal Moderated Mediation Analysis Results}
 \usage{
 modmed.plot(
   object,
@@ -37,7 +36,6 @@ modmed.plot(
 \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.
 }
 \description{
-Visual Representation of the Causal Moderated Mediation Analysis Results
 'modmed.plot' is used to visualize results from \code{modmed} function. This applies only if moderators.disc or moderators.cont is not NULL. The plot consists of two parts. The top represents the sampling distribution of the specified causal effect as a function of the specified moderator within the given levels of the other moderators. The bottom represents the distribution of the specified moderator on the x axis.
 }
 \examples{

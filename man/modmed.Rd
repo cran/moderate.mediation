@@ -2,8 +2,7 @@
 % Please edit documentation in R/moderate.mediation.R
 \name{modmed}
 \alias{modmed}
-\title{Causal Moderated Mediation Analysis
-'modmed' is used to fit mediator and outcome models and estimate and test causal effects for causal moderated mediation analysis. It is applicable to a treatment of any scale, a binary or continuous mediator and outcome, one or more moderators of any scale, and a wide range of scenarios of moderated mediation.}
+\title{Causal Moderated Mediation Analysis}
 \usage{
 modmed(
   data,
@@ -125,7 +124,6 @@ A list containing
 \item{data}{The data used in the analysis}
 }
 \description{
-Causal Moderated Mediation Analysis
 'modmed' is used to fit mediator and outcome models and estimate and test causal effects for causal moderated mediation analysis. It is applicable to a treatment of any scale, a binary or continuous mediator and outcome, one or more moderators of any scale, and a wide range of scenarios of moderated mediation.
 }
 \examples{

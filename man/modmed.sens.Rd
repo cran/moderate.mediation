@@ -2,8 +2,7 @@
 % Please edit documentation in R/moderate.mediation.R
 \name{modmed.sens}
 \alias{modmed.sens}
-\title{Simulation-Based Sensitivity Analysis Table for Causal Moderated Mediation Analysis
-modmed.sens' is used to evaluate the sensitivity of the estimated causal effects obtained from \code{modmed} function to potential violations of the ignorability assumptions from the frequentist perspective. It estimates the causal effects after adjusting for an unmeasured pretreatment confounder, U, with a specified degree of confounding. In a randomized experiment, the degree of confounding is evaluated via two sensitivity parameters, the coefficient of U in the mediator model and that in the outcome model, given the specified prior distribution of U. When the treatment is not randomized, an additional sensitivity parameter is introduced -- the coefficient of U in the treatment model. The treatment, mediator, outcome, and unmeasured pretreatment confounder could be either binary or continuous.}
+\title{Simulation-Based Sensitivity Analysis Table for Causal Moderated Mediation Analysis}
 \usage{
 modmed.sens(
   object,
@@ -66,7 +65,6 @@ A list containing
 \item{results.new}{tables for the causal effect estimates, standard errors, and p values in all the grids, after the adjustment of the unobserved pretreatment confounder.}
 }
 \description{
-Simulation-Based Sensitivity Analysis Table for Causal Moderated Mediation Analysis
 modmed.sens' is used to evaluate the sensitivity of the estimated causal effects obtained from \code{modmed} function to potential violations of the ignorability assumptions from the frequentist perspective. It estimates the causal effects after adjusting for an unmeasured pretreatment confounder, U, with a specified degree of confounding. In a randomized experiment, the degree of confounding is evaluated via two sensitivity parameters, the coefficient of U in the mediator model and that in the outcome model, given the specified prior distribution of U. When the treatment is not randomized, an additional sensitivity parameter is introduced -- the coefficient of U in the treatment model. The treatment, mediator, outcome, and unmeasured pretreatment confounder could be either binary or continuous.
 }
 \examples{

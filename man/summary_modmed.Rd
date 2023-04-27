@@ -2,8 +2,7 @@
 % Please edit documentation in R/moderate.mediation.R
 \name{summary_modmed}
 \alias{summary_modmed}
-\title{Summarizing Output for Causal Moderated Mediation Analysis
-'summary_modmed' is used to report from causal moderated mediation analysis}
+\title{Summarizing Output for Causal Moderated Mediation Analysis}
 \usage{
 summary_modmed(object)
 }
@@ -14,7 +13,6 @@ summary_modmed(object)
 \code{modmed} returns causal moderated mediation analysis results. The \code{summary_modmed} function provides summary tables of the results.
 }
 \description{
-Summarizing Output for Causal Moderated Mediation Analysis
 'summary_modmed' is used to report from causal moderated mediation analysis
 }
 \examples{

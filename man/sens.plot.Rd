@@ -36,9 +36,10 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
-sens.results = modmed.sens(modmed.results, U.scale = "binary", grid.b.m = 2,
-    grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
-sens.plot(modmed.results, sens.results, "PIE")
+sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref",
+    U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2,
+    ncore = 1)
+sens.plot(modmed.results, sens.results, "TIE.ref")
 }
 }
 \references{
