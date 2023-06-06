@@ -6,7 +6,8 @@
 \usage{
 modmed.sens(
   object,
-  sens.effect = rownames(object$effects),
+  sens.effect = rownames(object$effects)[-which(rownames(object$effects) \%in\% c("TE",
+    "TE.ref", "TE.dif"))],
   range.b.m = NULL,
   range.b.y = NULL,
   grid.b.m = 10,
@@ -20,13 +21,13 @@ modmed.sens(
   b.t = NULL,
   iter = 10,
   nsim = 5,
-  ncore = detectCores()
+  ncore = 2
 )
 }
 \arguments{
 \item{object}{Output from the \code{modmed} function.}
 
-\item{sens.effect}{A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif").}
+\item{sens.effect}{A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the population average, conditional, and moderated mediation effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif").}
 
 \item{range.b.m}{The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized mediator model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the mediator. The lower bound is the negative of the upper bound. The default is NULL.}
 
@@ -54,7 +55,7 @@ modmed.sens(
 
 \item{nsim}{The number of random draws of the unobserved pretreatment confounder in each cell. The default is 5. Increase the number for more smooth curves.}
 
-\item{ncore}{The number of cores for parallel computing. The default is the number of CPU cores on the current host.}
+\item{ncore}{The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function.}
 }
 \value{
 A list containing
@@ -84,12 +85,13 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous")
 sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref",
-    U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
+    U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2,
+    ncore = 1)
 sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref",
     U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"),
         emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL,
         workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2,
-    grid.b.y = 2, iter = 2, nsim = 2)
+    grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
 }
 }
 \references{

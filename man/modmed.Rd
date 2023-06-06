@@ -97,7 +97,7 @@ modmed(
 }
 \value{
 A list containing
-\item{effects}{Estimation results of the causal effects. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
+\item{effects}{Estimation results of the causal effects. "TE" indicates the total treatment effect. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TE.ref", "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TE.dif", TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
 \item{m.model}{Estimation results of the mediator model}
 \item{y.model}{Estimation results of the outcome model}
 \item{results}{1000 draws from the sampling distribution of the causal effects.}
@@ -127,20 +127,30 @@ A list containing
 'modmed' is used to fit mediator and outcome models and estimate and test causal effects for causal moderated mediation analysis. It is applicable to a treatment of any scale, a binary or continuous mediator and outcome, one or more moderators of any scale, and a wide range of scenarios of moderated mediation.
 }
 \examples{
-\donttest{
 data(newws)
-modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
-    outcome = "depression", covariates.disc = c("emp_prior", "nevmar",
-        "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude",
-        "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC",
-    m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC",
-        "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL,
-        nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL),
+modmed.results = modmed(data = newws, treatment = "treat",
+    mediator = "emp", outcome = "depression", covariates.disc = NULL,
+    covariates.cont = NULL, moderators.disc = "CHCNT", moderators.cont = NULL,
+    m.model = list(intercept = "CHCNT", treatment = "CHCNT"),
+    y.model = list(intercept = "CHCNT", treatment = "CHCNT",
+        mediator = "CHCNT", tm = "CHCNT"), comp.mod.disc.values = 3,
+    ref.mod.disc.values = 2, comp.mod.cont.values = NULL, ref.mod.cont.values = NULL,
+    m.scale = "binary", y.scale = "continuous", seed = 1)
+\donttest{
+modmed.results = modmed(data = newws, treatment = "treat",
+    mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior",
+        "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref",
+        "attitude", "depress_prior"), moderators.disc = "CHCNT",
+    moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC",
+        "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL,
+        nevmar = NULL, hispanic = NULL, nohsdip = NULL,
+        workpref = NULL, attitude = NULL, depress_prior = NULL),
     y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC",
         "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC",
         "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL,
-        nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL),
-    comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
+        nohsdip = NULL, workpref = NULL, attitude = NULL,
+        depress_prior = NULL), comp.mod.disc.values = 3,
+    ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
 }

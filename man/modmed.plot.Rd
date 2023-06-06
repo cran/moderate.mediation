@@ -12,13 +12,13 @@ modmed.plot(
   other.mod.cont.values = NULL,
   is.dist.moderator = FALSE,
   probs = c(0.1, 0.25, 0.5, 0.75, 0.9),
-  ncore = detectCores()
+  ncore = 2
 )
 }
 \arguments{
 \item{object}{Output from the \code{modmed} function.}
 
-\item{effect}{A character string indicating which causal effect to be plotted. effect can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".}
+\item{effect}{A character string indicating which causal effect to be plotted. effect can be specified as "TE", "TIE", "PIE", "PDE", "TDE", "INT", "TE.ref", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TE.dif", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".}
 
 \item{moderator}{A character string indicating which moderator to be plotted. It must be one of the moderators specified in the function of \code{modmed}.}
 
@@ -30,7 +30,7 @@ modmed.plot(
 
 \item{probs}{A vector of percentiles to be plotted on the distribution of the moderator if the moderator is continuous. NULL if is.dist.moderator = FALSE. The default is c(0.1, 0.25, 0.5, 0.75, 0.9).}
 
-\item{ncore}{The number of cores for parallel computing. The default is the number of CPU cores on the current host.}
+\item{ncore}{The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function.}
 }
 \value{
 \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.
@@ -56,7 +56,7 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
 modmed.plot(modmed.results, effect = "TIE", moderator = "ADCPC",
-    other.mod.disc.values = 1, is.dist.moderator = TRUE)
+    other.mod.disc.values = 1, is.dist.moderator = TRUE, ncore = 1)
 }
 }
 \references{

@@ -1,6 +1,6 @@
 Package: moderate.mediation
-Version: 0.0.4
-Date: 2023-04-26
+Version: 0.0.5
+Date: 2023-05-30
 Title: Causal Moderated Mediation Analysis
 Authors@R: 
   c(person(given = "Xu",
@@ -18,8 +18,8 @@ Description: Causal moderated mediation analysis using the methods proposed by Q
 License: GPL-2
 RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2023-04-27 04:00:07 UTC; XUQIN
+Packaged: 2023-06-05 14:02:58 UTC; XUQIN
 Author: Xu Qin [aut, cre, cph],
   Lijuan Wang [ctb]
 Repository: CRAN
-Date/Publication: 2023-04-27 13:10:02 UTC
+Date/Publication: 2023-06-06 07:50:02 UTC

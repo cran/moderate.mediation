@@ -56,7 +56,7 @@ NULL
 #' @param plot.effect The effect to be plotted. The default is NULL. It is used only when modmed.plot is run.
 #' 
 #' @return A list containing
-#' \item{effects}{Estimation results of the causal effects. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
+#' \item{effects}{Estimation results of the causal effects. "TE" indicates the total treatment effect. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TE.ref", "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TE.dif", TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
 #' \item{m.model}{Estimation results of the mediator model}
 #' \item{y.model}{Estimation results of the outcome model}
 #' \item{results}{1000 draws from the sampling distribution of the causal effects.}
@@ -88,8 +88,25 @@ NULL
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom earth earth
 #' @examples
-#' \donttest{
 #' data(newws)
+#' modmed.results = modmed(data = newws, 
+#'                         treatment = "treat", 
+#'                         mediator = "emp", 
+#'                         outcome = "depression", 
+#'                         covariates.disc = NULL,
+#'                         covariates.cont = NULL, 
+#'                         moderators.disc = "CHCNT", 
+#'                         moderators.cont = NULL, 
+#'                         m.model = list(intercept = "CHCNT", treatment = "CHCNT"), 
+#'                         y.model = list(intercept = "CHCNT", treatment = "CHCNT", mediator = "CHCNT", tm = "CHCNT"),
+#'                         comp.mod.disc.values = 3, 
+#'                         ref.mod.disc.values = 2, 
+#'                         comp.mod.cont.values = NULL, 
+#'                         ref.mod.cont.values = NULL, 
+#'                         m.scale = "binary", 
+#'                         y.scale = "continuous", 
+#'                         seed = 1) 
+#' \donttest{
 #' modmed.results = modmed(data = newws, 
 #'                         treatment = "treat", 
 #'                         mediator = "emp", 
@@ -262,7 +279,7 @@ modmed = function(
         stop("Please make sure that the length and order of comp.mod.cont.values should be the same as moderators.cont")
     }
     
-    if(!is.null(ref.mod.disc.values) & !is.na(ref.mod.disc.values)){
+    if(!is.null(ref.mod.disc.values) & !any(is.na(ref.mod.disc.values))){
       for(i in 1:length(ref.mod.disc.values)){
         if(!ref.mod.disc.values[i] %in% unique(data[, moderators.disc[i]]))
           stop("Please specify each of ref.mod.disc.values to be one of the values of the corresponding moderator in the data")
@@ -769,6 +786,11 @@ modmed = function(
               TDE.ref = PDE.ref + INT.ref
             }
           } else {
+            if(plot.effect == "TE"){
+              y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+              results = y1m1.ref - y0m0.ref
+            }
             if(plot.effect == "TIE"){
               y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
               y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
@@ -1069,6 +1091,10 @@ modmed = function(
                 y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
               }
             } else {
+              if(plot.effect == "TE"){
+                y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+              }
               if(plot.effect == "TIE"){
                 y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
                 y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
@@ -1181,6 +1207,9 @@ modmed = function(
               TDE.ref = PDE.ref + INT.ref
             }
           } else {
+            if(plot.effect == "TE"){
+              results = apply(y1m1.ref - y0m0.ref, 2, mean)
+            }
             if(plot.effect == "TIE"){
               results = apply(y1m1.ref - y1m0.ref, 2, mean)
             }
@@ -1288,6 +1317,11 @@ modmed = function(
           results = cbind(TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
         }
       } else {
+        if(plot.effect == "TE"){
+          y1m1.ref = apply(est.y1m1, 2, ref.fun)
+          y0m0.ref = apply(est.y0m0, 2, ref.fun)
+          results = y1m1.ref - y0m0.ref
+        }
         if(plot.effect == "TIE"){
           y1m1.ref = apply(est.y1m1, 2, ref.fun)
           y1m0.ref = apply(est.y1m0, 2, ref.fun)
@@ -1651,9 +1685,15 @@ modmed = function(
       return(sens.results[, sens.effect])
     } else {
       # Step 5. Compute summary statistics such as point estimates and confidence intervals.
+      TE = results[, "TIE"] + results[, "PDE"]
+      TE.ref = results[, "TIE.ref"] + results[, "PDE.ref"]
+      TE.dif = results[, "TIE.dif"] + results[, "PDE.dif"]
+      results = cbind(TE, results[, 1:5], TE.ref, results[, 6:10], TE.dif, results[, 11:15])
+      
       est.results = apply(results, 2, mean)
       se.results = apply(results, 2, sd)
       ci.results = apply(results, 2, quantile, probs = c((1 - conf.level)/2, (1 + conf.level)/2))
+      
       
       # Output
       # Mediator and outcome models
@@ -1741,6 +1781,7 @@ modmed = function(
       
       # Causal effects
       summary.effects = cbind(est.results, se.results, ci.results[1, ], ci.results[2, ])
+        
       colnames(summary.effects) = c("Estimate", "Std. Error", paste(conf.level * 100, "% CI Lower ", (1-conf.level)/2 *100, "%", sep=""),
                                     paste(conf.level * 100, "% CI Upper ", (1-conf.level)/2 *100, "%", sep=""))
       
@@ -1842,13 +1883,13 @@ summary_modmed = function(object){
 #' 
 #' 'modmed.plot' is used to visualize results from \code{modmed} function. This applies only if moderators.disc or moderators.cont is not NULL. The plot consists of two parts. The top represents the sampling distribution of the specified causal effect as a function of the specified moderator within the given levels of the other moderators. The bottom represents the distribution of the specified moderator on the x axis. 
 #' @param object Output from the \code{modmed} function.
-#' @param effect A character string indicating which causal effect to be plotted. effect can be specified as "TIE", "PIE", "PDE", "TDE", "INT", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".
+#' @param effect A character string indicating which causal effect to be plotted. effect can be specified as "TE", "TIE", "PIE", "PDE", "TDE", "INT", "TE.ref", "TIE.ref", "PIE.ref", "PDE.ref", "TDE.ref", "INT.ref", "TE.dif", "TIE.dif", "PIE.dif", "PDE.dif", "TDE.dif", or "INT.dif".
 #' @param moderator A character string indicating which moderator to be plotted. It must be one of the moderators specified in the function of \code{modmed}.
 #' @param other.mod.disc.values A vector of values of the other discrete moderators given which the conditional effect at each value of the specified moderator is estimated. The order of other.mod.disc.values should be the same as moderators.disc specified in the function of \code{modmed}, with the specified moderator removed if the specified moderator is discrete. If one does not want to condition some moderators on specific values, one may specify their values to be NA. NULL if there are no other discrete moderators.
 #' @param other.mod.cont.values A vector of values of the other continuous moderators given which the conditional effect at each value of the specified moderator is estimated. The order of other.mod.cont.values should be the same as moderators.cont specified in the function of \code{modmed}, with the specified moderator removedif the specified moderator is continuous. If one does not want to condition some moderators on specific values, one may specify their values to be NA. NULL if there are no other continuous moderators.
 #' @param is.dist.moderator A logical value. "TRUE" if distribution of the specified moderator is to be plotted at the bottom, and "FALSE" if not. The default is "FALSE".
 #' @param probs A vector of percentiles to be plotted on the distribution of the moderator if the moderator is continuous. NULL if is.dist.moderator = FALSE. The default is c(0.1, 0.25, 0.5, 0.75, 0.9).
-#' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host.
+#' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function. 
 #' @return \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.
 #' @author Xu Qin and Lijuan Wang
 #' @references Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
@@ -1864,9 +1905,9 @@ summary_modmed = function(object){
 #' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous", seed = 1) 
-#' modmed.plot(modmed.results, effect = "TIE", moderator = "ADCPC", other.mod.disc.values = 1, is.dist.moderator = TRUE)
+#' modmed.plot(modmed.results, effect = "TIE", moderator = "ADCPC", other.mod.disc.values = 1, is.dist.moderator = TRUE, ncore = 1)
 #' }
-modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, other.mod.cont.values = NULL, is.dist.moderator = FALSE, probs = c(0.1, 0.25, 0.5, 0.75, 0.9), ncore = detectCores()){
+modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, other.mod.cont.values = NULL, is.dist.moderator = FALSE, probs = c(0.1, 0.25, 0.5, 0.75, 0.9), ncore = 2){
   dens.x = dens.y = qquant = NULL # Otherwise no visible binding for global variable
   args.full = object$args.full
   if(!moderator %in% args.full$moderators.disc & !moderator %in% args.full$moderators.cont)
@@ -1907,15 +1948,18 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
   n.unique.moderator.values = length(unique.moderator.values)
   
   cl = makeCluster(ncore)
+  on.exit(stopCluster(cl))
   registerDoSNOW(cl)
-  pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
-                      max = n.unique.moderator.values, # Maximum value of the progress bar
-                      style = 3,    # Progress bar style (also available style = 1 and style = 2)
-                      # width = 50,   # Progress bar width. Defaults to getOption("width")
-                      char = "=")   # Character used to create the bar
+  
+  if(interactive()){
+    pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
+                        max = n.unique.moderator.values, # Maximum value of the progress bar
+                        style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                        # width = 50,   # Progress bar width. Defaults to getOption("width")
+                        char = "=")   # Character used to create the bar
+  }
   progress = function(n) setTxtProgressBar(pb, n)
   opts = list(progress = progress)
-  
   res = foreach(i = 1:n.unique.moderator.values, .options.snow = opts) %dopar% {
     args.full$comp.mod.disc.values = NULL
     args.full$comp.mod.cont.values = NULL
@@ -1968,7 +2012,10 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
     CIU = rep(quantile(est.effect, probs = (1 + conf.level)/2), length(est.effect))
     return(cbind.data.frame(est.effect = est.effect, moderator.values = moderator.values, CIL = CIL, CIU = CIU))
   }
-  close(pb)
+  
+  if(interactive()){
+    close(pb)
+  }
   
   est.effect = NULL
   moderator.values = NULL
@@ -2170,7 +2217,7 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' 
 #' modmed.sens' is used to evaluate the sensitivity of the estimated causal effects obtained from \code{modmed} function to potential violations of the ignorability assumptions from the frequentist perspective. It estimates the causal effects after adjusting for an unmeasured pretreatment confounder, U, with a specified degree of confounding. In a randomized experiment, the degree of confounding is evaluated via two sensitivity parameters, the coefficient of U in the mediator model and that in the outcome model, given the specified prior distribution of U. When the treatment is not randomized, an additional sensitivity parameter is introduced -- the coefficient of U in the treatment model. The treatment, mediator, outcome, and unmeasured pretreatment confounder could be either binary or continuous. 
 #' @param object Output from the \code{modmed} function.
-#' @param sens.effect A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif"). 
+#' @param sens.effect A vector of effects whose sensitivity will be assessed (string).  It is a vector of all the population average, conditional, and moderated mediation effects in the output of modmed function by default (i.e., if sens.effect is not specified). It can also be specified as a subvector of the default. For example, if a researcher is mainly interested in the sensitivity of moderated indirect effects, sens.effect can be specified as c("TIE.dif", "PIE.dif"). 
 #' @param range.b.m The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized mediator model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the mediator. The lower bound is the negative of the upper bound. The default is NULL. 
 #' @param range.b.y The range of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized outcome model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. E.g., it can be specified as c(-2, 2). If NULL, the upper bound of the range is determined by 2 times the maximum magnitude of the standardized conditional effect of the existing pretreatment confounders with the outcome. The lower bound is the negative of the upper bound. The default is NULL.
 #' @param grid.b.m The horizontal dimension of the grid. The default is 10. Increase the number for more smooth curves. 
@@ -2184,7 +2231,7 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' @param b.t This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.
 #' @param iter The number of iterations in the stochastic EM algorithm for generating the unobserved pretreatment confounder. The default is 10. 
 #' @param nsim The number of random draws of the unobserved pretreatment confounder in each cell. The default is 5. Increase the number for more smooth curves.
-#' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host.
+#' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function. 
 #' @return A list containing
 #' \item{X.coef.plot}{the sopes of the observed pretreatment confounders in the standardized mediator and outcome models (which are used to calibrate the strength of the sensitivity parameters in the sensitivity plots). }
 #' \item{b.t}{same as specified in the \code{modmed.sens} function if b.t is not NULL.}
@@ -2204,10 +2251,11 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous") 
-#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
-#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"), emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2)
+#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
+#' sens.results = modmed.sens(modmed.results, sens.effect = "TIE.ref", U.scale = "binary", t.model = list(intercept = c("ADCPC", "CHCNT"), emp_prior = "ADCPC", nevmar = "CHCNT", hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), grid.b.m = 2, grid.b.y = 2, iter = 2, nsim = 2, ncore = 1)
 #' }
-modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m = NULL, range.b.y = NULL, grid.b.m = 10, grid.b.y = 10, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = detectCores()){
+#' 
+modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(rownames(object$effects) %in% c("TE", "TE.ref", "TE.dif"))], range.b.m = NULL, range.b.y = NULL, grid.b.m = 10, grid.b.y = 10, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = 2){
   if(any(!sens.effect %in% rownames(object$effects)))
     stop("sens.effect must be a subvector of the effects in the output of modmed function.")
   args.full = object$args.full
@@ -2810,9 +2858,6 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
   args.full$is.U = TRUE
   args.full.ori = args.full
   
-  cl = makeCluster(ncore)
-  registerDoSNOW(cl)
-  
   sd.y.ori = sd.y
   sd.m.ori = sd.m
   grid = NULL
@@ -2822,16 +2867,21 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
     }
   }
   
-  # Initializes the progress bar
-  pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
-                      max = nrow(grid), # Maximum value of the progress bar
-                      style = 3,    # Progress bar style (also available style = 1 and style = 2)
-                      # width = 50,   # Progress bar width. Defaults to getOption("width")
-                      char = "=")   # Character used to create the bar
+  cl = makeCluster(ncore)
+  on.exit(stopCluster(cl))
+  registerDoSNOW(cl)
+  
+  if(interactive()){
+    # Initializes the progress bar
+    pb = txtProgressBar(min = 0,      # Minimum value of the progress bar
+                        max = nrow(grid) * nsim, # Maximum value of the progress bar
+                        style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                        # width = 50,   # Progress bar width. Defaults to getOption("width")
+                        char = "=")   # Character used to create the bar
+  }
   progress = function(n) setTxtProgressBar(pb, n)
   opts = list(progress = progress)
-  
-  resij = foreach(s = 1:nrow(grid), .options.snow = opts) %dopar% {
+  resij = foreach(s.total = 1:(nrow(grid) * nsim), .options.snow = opts) %dopar% {
     modmed = function(
     data,
     treatment,
@@ -2985,7 +3035,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
             stop("Please make sure that the length and order of comp.mod.cont.values should be the same as moderators.cont")
         }
         
-        if(!is.null(ref.mod.disc.values) & !is.na(ref.mod.disc.values)){
+        if(!is.null(ref.mod.disc.values) & !any(is.na(ref.mod.disc.values))){
           for(i in 1:length(ref.mod.disc.values)){
             if(!ref.mod.disc.values[i] %in% unique(data[, moderators.disc[i]]))
               stop("Please specify each of ref.mod.disc.values to be one of the values of the corresponding moderator in the data")
@@ -3492,6 +3542,11 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
                   TDE.ref = PDE.ref + INT.ref
                 }
               } else {
+                if(plot.effect == "TE"){
+                  y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
+                  y0m0.ref = apply(y0m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
+                  results = y1m1.ref - y0m0.ref
+                }
                 if(plot.effect == "TIE"){
                   y1m1.ref = apply(y1m1(predict.m.data.ref, predict.y.data.ref), 2, mean)
                   y1m0.ref = apply(y1m0(predict.m.data.ref, predict.y.data.ref), 2, mean)
@@ -3792,6 +3847,10 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
                     y0m1.ref = cbind(y0m1.ref, y0m1(predict.m.data.ref, predict.y.data.ref))
                   }
                 } else {
+                  if(plot.effect == "TE"){
+                    y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
+                    y0m0.ref = cbind(y0m0.ref, y0m0(predict.m.data.ref, predict.y.data.ref))
+                  }
                   if(plot.effect == "TIE"){
                     y1m1.ref = cbind(y1m1.ref, y1m1(predict.m.data.ref, predict.y.data.ref))
                     y1m0.ref = cbind(y1m0.ref, y1m0(predict.m.data.ref, predict.y.data.ref))
@@ -3904,6 +3963,9 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
                   TDE.ref = PDE.ref + INT.ref
                 }
               } else {
+                if(plot.effect == "TE"){
+                  results = apply(y1m1.ref - y0m0.ref, 2, mean)
+                }
                 if(plot.effect == "TIE"){
                   results = apply(y1m1.ref - y1m0.ref, 2, mean)
                 }
@@ -4011,6 +4073,11 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
               results = cbind(TIE.ref, PIE.ref, PDE.ref, TDE.ref, INT.ref)
             }
           } else {
+            if(plot.effect == "TE"){
+              y1m1.ref = apply(est.y1m1, 2, ref.fun)
+              y0m0.ref = apply(est.y0m0, 2, ref.fun)
+              results = y1m1.ref - y0m0.ref
+            }
             if(plot.effect == "TIE"){
               y1m1.ref = apply(est.y1m1, 2, ref.fun)
               y1m0.ref = apply(est.y1m0, 2, ref.fun)
@@ -4374,9 +4441,15 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
           return(sens.results[, sens.effect])
         } else {
           # Step 5. Compute summary statistics such as point estimates and confidence intervals.
+          TE = results[, "TIE"] + results[, "PDE"]
+          TE.ref = results[, "TIE.ref"] + results[, "PDE.ref"]
+          TE.dif = results[, "TIE.dif"] + results[, "PDE.dif"]
+          results = cbind(TE, results[, 1:5], TE.ref, results[, 6:10], TE.dif, results[, 11:15])
+          
           est.results = apply(results, 2, mean)
           se.results = apply(results, 2, sd)
           ci.results = apply(results, 2, quantile, probs = c((1 - conf.level)/2, (1 + conf.level)/2))
+          
           
           # Output
           # Mediator and outcome models
@@ -4464,6 +4537,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
           
           # Causal effects
           summary.effects = cbind(est.results, se.results, ci.results[1, ], ci.results[2, ])
+          
           colnames(summary.effects) = c("Estimate", "Std. Error", paste(conf.level * 100, "% CI Lower ", (1-conf.level)/2 *100, "%", sep=""),
                                         paste(conf.level * 100, "% CI Upper ", (1-conf.level)/2 *100, "%", sep=""))
           
@@ -4478,55 +4552,54 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
       }
     }
     
-    i = grid[s, 1]
-    j = grid[s, 2]
-    results = matrix(NA, nsim * args.full$nmc, length(sens.effect))
-    for(k in 1:nsim){
-      args.full = args.full.ori
-      args.full$b.m = b.m.all[i]
-      args.full$b.y = b.y.all[j]
-      if(y.scale == "binary")
-        sd.y = sd.y.ori/sqrt(1 - args.full$b.y^2) # When U is adjusted for, the latent index on the original scale changes by args.full$b.y * sqrt(var.y/var.u) * U, where args.full$b.y is standardized and transformed back to the original coefficient after multiplying with sqrt(var.y/var.u). Hence, var.y = var.y.ori + args.full$b.y^2 * var.y. Hence, var.y = var.y.ori/(1- args.full$b.y^2).
-      if(m.scale == "binary")
-        sd.m = sd.m.ori/sqrt(1 - args.full$b.m^2) # When U is adjusted for, the latent index on the original scale changes by args.full$b.m * sqrt(var.m/var.u) * U, where args.full$b.m is standardized and transformed back to the original coefficient after multiplying with sqrt(var.m/var.u). Hence, var.m = var.m.ori + args.full$b.m^2 * var.m. Hence, var.m = var.m.ori/(1- args.full$b.m^2).
-      if(t.rand == TRUE){
-        if(U.scale == "binary"){
-          args.full$b.y = args.full$b.y/sqrt(p.u * (1 - p.u)) * sd.y
-          args.full$b.m = args.full$b.m/sqrt(p.u * (1 - p.u)) * sd.m
-          args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m)$Unmeasure # In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
-        }
-        if(U.scale == "continuous"){
-          args.full$b.y = args.full$b.y/sigma.u * sd.y
-          args.full$b.m = args.full$b.m/sigma.u * sd.m
-          args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m)$Unmeasure # In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
-        }
+    s.total = s.total
+    i = grid[ceiling(s.total/nsim), 1]
+    j = grid[ceiling(s.total/nsim), 2]
+    args.full = args.full.ori
+    args.full$b.m = b.m.all[i]
+    args.full$b.y = b.y.all[j]
+    if(y.scale == "binary")
+      sd.y = sd.y.ori/sqrt(1 - args.full$b.y^2) # When U is adjusted for, the latent index on the original scale changes by args.full$b.y * sqrt(var.y/var.u) * U, where args.full$b.y is standardized and transformed back to the original coefficient after multiplying with sqrt(var.y/var.u). Hence, var.y = var.y.ori + args.full$b.y^2 * var.y. Hence, var.y = var.y.ori/(1- args.full$b.y^2).
+    if(m.scale == "binary")
+      sd.m = sd.m.ori/sqrt(1 - args.full$b.m^2) # When U is adjusted for, the latent index on the original scale changes by args.full$b.m * sqrt(var.m/var.u) * U, where args.full$b.m is standardized and transformed back to the original coefficient after multiplying with sqrt(var.m/var.u). Hence, var.m = var.m.ori + args.full$b.m^2 * var.m. Hence, var.m = var.m.ori/(1- args.full$b.m^2).
+    if(t.rand == TRUE){
+      if(U.scale == "binary"){
+        args.full$b.y = args.full$b.y/sqrt(p.u * (1 - p.u)) * sd.y
+        args.full$b.m = args.full$b.m/sqrt(p.u * (1 - p.u)) * sd.m
+        args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m)$Unmeasure # In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
       }
-      if(t.rand == FALSE){
-        if(t.scale == "continuous")
-          sd.t = sd(data[, t])
-        if(t.scale == "binary"){
-          l.t = glm(as.formula(paste(t, "~", formula.t)), family = binomial(link = "probit"), data = data)
-          sd.t = sqrt(var(predict(l.t, type = "link")) + 1)/sqrt(1 - b.t^2)
-        }
-        if(U.scale == "binary"){
-          args.full$b.y = args.full$b.y/sqrt(p.u * (1 - p.u)) * sd.y
-          args.full$b.m = args.full$b.m/sqrt(p.u * (1 - p.u)) * sd.m
-          b.t = b.t/sqrt(p.u * (1 - p.u)) * sd.t
-          args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m, b.t = b.t)$Unmeasure# In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
-        }
-        if(U.scale == "continuous"){
-          args.full$b.y = args.full$b.y/sigma.u * sd.y
-          args.full$b.m = args.full$b.m/sigma.u * sd.m
-          b.t = b.t/sigma.u * sd.t
-          args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m, b.t = b.t)$Unmeasure# In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
-        }
+      if(U.scale == "continuous"){
+        args.full$b.y = args.full$b.y/sigma.u * sd.y
+        args.full$b.m = args.full$b.m/sigma.u * sd.m
+        args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m)$Unmeasure # In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
       }
-      results[(args.full$nmc * (k - 1) + 1):(args.full$nmc * k), ] = do.call(modmed, args.full)
     }
-    colnames(results) = sens.effect
-    return(c(apply(results, 2, mean), CIL = apply(results, 2, quantile, probs = c((1 - conf.level)/2)), CIU = apply(results, 2, quantile, probs = c((1 + conf.level)/2))))
+    if(t.rand == FALSE){
+      if(t.scale == "continuous")
+        sd.t = sd(data[, t])
+      if(t.scale == "binary"){
+        l.t = glm(as.formula(paste(t, "~", formula.t)), family = binomial(link = "probit"), data = data)
+        sd.t = sqrt(var(predict(l.t, type = "link")) + 1)/sqrt(1 - b.t^2)
+      }
+      if(U.scale == "binary"){
+        args.full$b.y = args.full$b.y/sqrt(p.u * (1 - p.u)) * sd.y
+        args.full$b.m = args.full$b.m/sqrt(p.u * (1 - p.u)) * sd.m
+        b.t = b.t/sqrt(p.u * (1 - p.u)) * sd.t
+        args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m, b.t = b.t)$Unmeasure# In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
+      }
+      if(U.scale == "continuous"){
+        args.full$b.y = args.full$b.y/sigma.u * sd.y
+        args.full$b.m = args.full$b.m/sigma.u * sd.m
+        b.t = b.t/sigma.u * sd.t
+        args.full$data$Unmeasure = genU(b.y = args.full$b.y, b.m = args.full$b.m, b.t = b.t)$Unmeasure# In genU, everything is on the original scale, and thus the sensitivity parameter is transformed back to the original scale.
+      }
+    }
+    return(do.call(modmed, args.full))
   }
-  close(pb)
+  
+  if(interactive()){
+    close(pb)
+  }
   
   vals = matrix(NA, grid.b.m, grid.b.y)
   rownames(vals) = round(b.m.all, 2)
@@ -4577,84 +4650,91 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
     INT.dif.all = CIL_INT.dif.all = CIU_INT.dif.all = vals
   }
   
-  for(s in 1:nrow(grid)){
-    i = grid[s, 1]
-    j = grid[s, 2]
+  for(s.grid in 1:nrow(grid)){
+    results = matrix(NA, nsim * args.full$nmc, length(sens.effect))
+    for(s.nsim in 1:nsim){
+      results[(args.full$nmc * (s.nsim - 1) + 1):(args.full$nmc * s.nsim), ] = resij[[(s.grid - 1) * nsim + s.nsim]]
+    }
+    colnames(results) = sens.effect
+    results.s = c(apply(results, 2, mean), CIL = apply(results, 2, quantile, probs = c((1 - conf.level)/2)), CIU = apply(results, 2, quantile, probs = c((1 + conf.level)/2)))
+    
+    i = grid[s.grid, 1]
+    j = grid[s.grid, 2]
     
     if("TIE" %in% sens.effect){
-      TIE.all[i, j] = resij[[s]]["TIE"]
-      CIL_TIE.all[i, j] = resij[[s]]["CIL.TIE"]
-      CIU_TIE.all[i, j] = resij[[s]]["CIU.TIE"]
+      TIE.all[i, j] = results.s["TIE"]
+      CIL_TIE.all[i, j] = results.s["CIL.TIE"]
+      CIU_TIE.all[i, j] = results.s["CIU.TIE"]
     }
     if("PIE" %in% sens.effect){
-      PIE.all[i, j] = resij[[s]]["PIE"]
-      CIL_PIE.all[i, j] = resij[[s]]["CIL.PIE"]
-      CIU_PIE.all[i, j] = resij[[s]]["CIU.PIE"]
+      PIE.all[i, j] = results.s["PIE"]
+      CIL_PIE.all[i, j] = results.s["CIL.PIE"]
+      CIU_PIE.all[i, j] = results.s["CIU.PIE"]
     }
     if("PDE" %in% sens.effect){
-      PDE.all[i, j] = resij[[s]]["PDE"]
-      CIL_PDE.all[i, j] = resij[[s]]["CIL.PDE"]
-      CIU_PDE.all[i, j] = resij[[s]]["CIU.PDE"]
+      PDE.all[i, j] = results.s["PDE"]
+      CIL_PDE.all[i, j] = results.s["CIL.PDE"]
+      CIU_PDE.all[i, j] = results.s["CIU.PDE"]
     }
     if("TDE" %in% sens.effect){
-      TDE.all[i, j] = resij[[s]]["TDE"]
-      CIL_TDE.all[i, j] = resij[[s]]["CIL.TDE"]
-      CIU_TDE.all[i, j] = resij[[s]]["CIU.TDE"]
+      TDE.all[i, j] = results.s["TDE"]
+      CIL_TDE.all[i, j] = results.s["CIL.TDE"]
+      CIU_TDE.all[i, j] = results.s["CIU.TDE"]
     }
     if("INT" %in% sens.effect){
-      INT.all[i, j] = resij[[s]]["INT"]
-      CIL_INT.all[i, j] = resij[[s]]["CIL.INT"]
-      CIU_INT.all[i, j] = resij[[s]]["CIU.INT"]
+      INT.all[i, j] = results.s["INT"]
+      CIL_INT.all[i, j] = results.s["CIL.INT"]
+      CIU_INT.all[i, j] = results.s["CIU.INT"]
     }
     if("TIE.ref" %in% sens.effect){
-      TIE.ref.all[i, j] = resij[[s]]["TIE.ref"]
-      CIL_TIE.ref.all[i, j] = resij[[s]]["CIL.TIE.ref"]
-      CIU_TIE.ref.all[i, j] = resij[[s]]["CIU.TIE.ref"]
+      TIE.ref.all[i, j] = results.s["TIE.ref"]
+      CIL_TIE.ref.all[i, j] = results.s["CIL.TIE.ref"]
+      CIU_TIE.ref.all[i, j] = results.s["CIU.TIE.ref"]
     }
     if("PIE.ref" %in% sens.effect){
-      PIE.ref.all[i, j] = resij[[s]]["PIE.ref"]
-      CIL_PIE.ref.all[i, j] = resij[[s]]["CIL.PIE.ref"]
-      CIU_PIE.ref.all[i, j] = resij[[s]]["CIU.PIE.ref"]
+      PIE.ref.all[i, j] = results.s["PIE.ref"]
+      CIL_PIE.ref.all[i, j] = results.s["CIL.PIE.ref"]
+      CIU_PIE.ref.all[i, j] = results.s["CIU.PIE.ref"]
     }
     if("PDE.ref" %in% sens.effect){
-      PDE.ref.all[i, j] = resij[[s]]["PDE.ref"]
-      CIL_PDE.ref.all[i, j] = resij[[s]]["CIL.PDE.ref"]
-      CIU_PDE.ref.all[i, j] = resij[[s]]["CIU.PDE.ref"]
+      PDE.ref.all[i, j] = results.s["PDE.ref"]
+      CIL_PDE.ref.all[i, j] = results.s["CIL.PDE.ref"]
+      CIU_PDE.ref.all[i, j] = results.s["CIU.PDE.ref"]
     }
     if("TDE.ref" %in% sens.effect){
-      TDE.ref.all[i, j] = resij[[s]]["TDE.ref"]
-      CIL_TDE.ref.all[i, j] = resij[[s]]["CIL.TDE.ref"]
-      CIU_TDE.ref.all[i, j] = resij[[s]]["CIU.TDE.ref"]
+      TDE.ref.all[i, j] = results.s["TDE.ref"]
+      CIL_TDE.ref.all[i, j] = results.s["CIL.TDE.ref"]
+      CIU_TDE.ref.all[i, j] = results.s["CIU.TDE.ref"]
     }
     if("INT.ref" %in% sens.effect){
-      INT.ref.all[i, j] = resij[[s]]["INT.ref"]
-      CIL_INT.ref.all[i, j] = resij[[s]]["CIL.INT.ref"]
-      CIU_INT.ref.all[i, j] = resij[[s]]["CIU.INT.ref"]
+      INT.ref.all[i, j] = results.s["INT.ref"]
+      CIL_INT.ref.all[i, j] = results.s["CIL.INT.ref"]
+      CIU_INT.ref.all[i, j] = results.s["CIU.INT.ref"]
     }
     if("TIE.dif" %in% sens.effect){
-      TIE.dif.all[i, j] = resij[[s]]["TIE.dif"]
-      CIL_TIE.dif.all[i, j] = resij[[s]]["CIL.TIE.dif"]
-      CIU_TIE.dif.all[i, j] = resij[[s]]["CIU.TIE.dif"]
+      TIE.dif.all[i, j] = results.s["TIE.dif"]
+      CIL_TIE.dif.all[i, j] = results.s["CIL.TIE.dif"]
+      CIU_TIE.dif.all[i, j] = results.s["CIU.TIE.dif"]
     }
     if("PIE.dif" %in% sens.effect){
-      PIE.dif.all[i, j] = resij[[s]]["PIE.dif"]
-      CIL_PIE.dif.all[i, j] = resij[[s]]["CIL.PIE.dif"]
-      CIU_PIE.dif.all[i, j] = resij[[s]]["CIU.PIE.dif"]
+      PIE.dif.all[i, j] = results.s["PIE.dif"]
+      CIL_PIE.dif.all[i, j] = results.s["CIL.PIE.dif"]
+      CIU_PIE.dif.all[i, j] = results.s["CIU.PIE.dif"]
     }
     if("PDE.dif" %in% sens.effect){
-      PDE.dif.all[i, j] = resij[[s]]["PDE.dif"]
-      CIL_PDE.dif.all[i, j] = resij[[s]]["CIL.PDE.dif"]
-      CIU_PDE.dif.all[i, j] = resij[[s]]["CIU.PDE.dif"]
+      PDE.dif.all[i, j] = results.s["PDE.dif"]
+      CIL_PDE.dif.all[i, j] = results.s["CIL.PDE.dif"]
+      CIU_PDE.dif.all[i, j] = results.s["CIU.PDE.dif"]
     }
     if("TDE.dif" %in% sens.effect){
-      TDE.dif.all[i, j] = resij[[s]]["TDE.dif"]
-      CIL_TDE.dif.all[i, j] = resij[[s]]["CIL.TDE.dif"]
-      CIU_TDE.dif.all[i, j] = resij[[s]]["CIU.TDE.dif"]
+      TDE.dif.all[i, j] = results.s["TDE.dif"]
+      CIL_TDE.dif.all[i, j] = results.s["CIL.TDE.dif"]
+      CIU_TDE.dif.all[i, j] = results.s["CIU.TDE.dif"]
     }
     if("INT.dif" %in% sens.effect){
-      INT.dif.all[i, j] = resij[[s]]["INT.dif"]
-      CIL_INT.dif.all[i, j] = resij[[s]]["CIL.INT.dif"]
-      CIU_INT.dif.all[i, j] = resij[[s]]["CIU.INT.dif"]
+      INT.dif.all[i, j] = results.s["INT.dif"]
+      CIL_INT.dif.all[i, j] = results.s["CIL.INT.dif"]
+      CIU_INT.dif.all[i, j] = results.s["CIU.INT.dif"]
     }
   }
   
@@ -4734,8 +4814,6 @@ modmed.sens = function(object, sens.effect = rownames(object$effects), range.b.m
     results.new[["CIL.INT.dif"]] = CIL_INT.dif.all
     results.new[["CIU.INT.dif"]] = CIU_INT.dif.all
   }
-  
-  stopCluster(cl)
   
   return(list(b.t = b.t, X.coef.plot = X.coef.plot, range.b.m = range.b.m, range.b.y = range.b.y, b.y.all = b.y.all, b.m.all = b.m.all, results.new = results.new))
 }
