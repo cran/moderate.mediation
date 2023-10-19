@@ -82,7 +82,7 @@ NULL
 #' \item{predict.y.data}{Data for prediction of the marginal potential outcome}
 #' \item{data}{The data used in the analysis}
 #' @author Xu Qin and Lijuan Wang
-#' @references Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
+#' @references Qin, X., & Wang, L. (2023). Causal moderated mediation analysis: Methods and software
 #' @export
 #' @importFrom stats vcov quantile as.formula coef fitted glm lm predict model.matrix 
 #' @importFrom mvtnorm rmvnorm
@@ -1802,7 +1802,7 @@ modmed = function(
 #' @param object 	output from \code{modmed} function
 #' @return \code{modmed} returns causal moderated mediation analysis results. The \code{summary_modmed} function provides summary tables of the results.
 #' @author Xu Qin and Lijuan Wang
-#' @references Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
+#' @references Qin, X., & Wang, L. (2023). Causal moderated mediation analysis: Methods and software
 #' @export
 #' @importFrom stats df.residual pf anova AIC getCall
 #' @examples
@@ -1892,7 +1892,7 @@ summary_modmed = function(object){
 #' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function. 
 #' @return \code{modmed} returns causal moderated mediation analysis results. The \code{plot.modmed} function plots the results.
 #' @author Xu Qin and Lijuan Wang
-#' @references Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
+#' @references Qin, X., & Wang, L. (2023). Causal moderated mediation analysis: Methods and software
 #' @export
 #' @importFrom ggplot2 ggplot aes labs geom_boxplot geom_errorbar stat_summary geom_smooth geom_ribbon scale_fill_manual scale_x_continuous geom_vline geom_point geom_text geom_hline theme element_text geom_line scale_fill_brewer
 #' @importFrom cowplot plot_grid
@@ -2256,6 +2256,8 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' }
 #' 
 modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(rownames(object$effects) %in% c("TE", "TE.ref", "TE.dif"))], range.b.m = NULL, range.b.y = NULL, grid.b.m = 10, grid.b.y = 10, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = 2){
+  if("TE" %in% sens.effect|"TE.ref" %in% sens.effect|"TE.dif" %in% sens.effect)
+    stop("Sensitivity analysis here is for mediation effects, not including the total treatment effect.")
   if(any(!sens.effect %in% rownames(object$effects)))
     stop("sens.effect must be a subvector of the effects in the output of modmed function.")
   args.full = object$args.full

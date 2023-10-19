@@ -156,7 +156,7 @@ modmed.results = modmed(data = newws, treatment = "treat",
 }
 }
 \references{
-Qin, X., & Wang, L. (2022). Causal Moderated Mediation Analysis.
+Qin, X., & Wang, L. (2023). Causal moderated mediation analysis: Methods and software
 }
 \author{
 Xu Qin and Lijuan Wang
