@@ -236,15 +236,15 @@ modmed = function(
         stop("The moderators of the intercept of y.model must include all the moderators in the outcome model.")
     }
     
-    if(is.null(ref.mod.disc.values) & !is.null(moderators.disc)){
-      stop("If moderators.disc is not NULL, ref.mod.disc.values should not be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
-    }
+    # if(is.null(ref.mod.disc.values) & !is.null(moderators.disc)){
+    #   stop("If moderators.disc is not NULL, ref.mod.disc.values should not be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+    # }
     if(!is.null(ref.mod.disc.values) & is.null(moderators.disc)){
       stop("If moderators.disc is NULL, ref.mod.disc.values should also be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc.")
     }
-    if(is.null(ref.mod.cont.values) & !is.null(moderators.cont)){
-      stop("If moderators.cont is not NULL, ref.mod.cont.values should not be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
-    }
+    # if(is.null(ref.mod.cont.values) & !is.null(moderators.cont)){
+    #   stop("If moderators.cont is not NULL, ref.mod.cont.values should not be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+    # }
     if(!is.null(ref.mod.cont.values) & is.null(moderators.cont)){
       stop("If moderators.cont is NULL, ref.mod.cont.values should also be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont.")
     }
@@ -335,7 +335,7 @@ modmed = function(
     }
     
     new.moderators.predictors = function(predictors, moderators.ori.list){
-      if(!is.null(m.moderators.ori)){
+      if(!is.null(unique(unlist(moderators.ori.list)))){
         v1 = colnames(model.matrix(as.formula(paste("~", paste(moderators.ori.list[[1]], collapse = " + "))), data = data))[-1]
         k = 1
         for(i in 1:length(moderators.ori.list)){
@@ -346,7 +346,7 @@ modmed = function(
       predictors.new = NULL
       for(i in 1:length(predictors)){
         predictors.new = c(predictors.new, colnames(model.matrix(as.formula(paste("~", paste(predictors[i], collapse = " + "))), data = data))[-1])
-        if(!is.null(m.moderators.ori)){
+        if(!is.null(unique(unlist(moderators.ori.list)))){
           if(!predictors[i] %in% covariates.disc){
             assign(paste0("v", k + 1), moderators.ori.list[[i + 1]])
             k = k + 1
@@ -360,14 +360,14 @@ modmed = function(
           }
         }
       }
-      if(!is.null(m.moderators.ori)){
+      if(!is.null(unique(unlist(moderators.ori.list)))){
         moderators.new = rep(list(NULL), k)
         for(i in 1:k){
           if(!is.null(get(paste0("v", i))))
             moderators.new[[i]] = get(paste0("v", i))
         }
       }
-      if(!is.null(m.moderators.ori)){
+      if(!is.null(unique(unlist(moderators.ori.list)))){
         return(list(moderators.new = moderators.new, predictors.new = predictors.new))
       } else {
         return(list(predictors.new = predictors.new))
@@ -428,6 +428,7 @@ modmed = function(
           }
         }
       }
+      
       colnames(predict.data) = gsub("[^[:alnum:]\\:\\s]", "", colnames(predict.data))
       predict.data = as.data.frame(predict.data)
       
@@ -1685,10 +1686,17 @@ modmed = function(
       return(sens.results[, sens.effect])
     } else {
       # Step 5. Compute summary statistics such as point estimates and confidence intervals.
-      TE = results[, "TIE"] + results[, "PDE"]
-      TE.ref = results[, "TIE.ref"] + results[, "PDE.ref"]
-      TE.dif = results[, "TIE.dif"] + results[, "PDE.dif"]
-      results = cbind(TE, results[, 1:5], TE.ref, results[, 6:10], TE.dif, results[, 11:15])
+      results.ori = results
+      TE = results.ori[, "TIE"] + results.ori[, "PDE"]
+      results = cbind(TE, results.ori[, 1:5])
+      if(!is.null(ref.mod.values)){
+        TE.ref = results.ori[, "TIE.ref"] + results.ori[, "PDE.ref"]
+        results = cbind(results, TE.ref, results.ori[, 6:10])
+        if(!is.null(comp.mod.values)){
+          TE.dif = results.ori[, "TIE.dif"] + results.ori[, "PDE.dif"]
+          results = cbind(results, TE.dif, results.ori[, 11:15])
+        }
+      }
       
       est.results = apply(results, 2, mean)
       se.results = apply(results, 2, sd)
@@ -2994,15 +3002,15 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
             stop("The moderators of the intercept of y.model must include all the moderators in the outcome model.")
         }
         
-        if(is.null(ref.mod.disc.values) & !is.null(moderators.disc)){
-          stop("If moderators.disc is not NULL, ref.mod.disc.values should not be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
-        }
+        # if(is.null(ref.mod.disc.values) & !is.null(moderators.disc)){
+        #   stop("If moderators.disc is not NULL, ref.mod.disc.values should not be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+        # }
         if(!is.null(ref.mod.disc.values) & is.null(moderators.disc)){
           stop("If moderators.disc is NULL, ref.mod.disc.values should also be NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc.")
         }
-        if(is.null(ref.mod.cont.values) & !is.null(moderators.cont)){
-          stop("If moderators.cont is not NULL, ref.mod.cont.values should not be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
-        }
+        # if(is.null(ref.mod.cont.values) & !is.null(moderators.cont)){
+        #   stop("If moderators.cont is not NULL, ref.mod.cont.values should not be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA.")
+        # }
         if(!is.null(ref.mod.cont.values) & is.null(moderators.cont)){
           stop("If moderators.cont is NULL, ref.mod.cont.values should also be NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont.")
         }
@@ -3093,7 +3101,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
         }
         
         new.moderators.predictors = function(predictors, moderators.ori.list){
-          if(!is.null(m.moderators.ori)){
+          if(!is.null(unique(unlist(moderators.ori.list)))){
             v1 = colnames(model.matrix(as.formula(paste("~", paste(moderators.ori.list[[1]], collapse = " + "))), data = data))[-1]
             k = 1
             for(i in 1:length(moderators.ori.list)){
@@ -3104,7 +3112,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
           predictors.new = NULL
           for(i in 1:length(predictors)){
             predictors.new = c(predictors.new, colnames(model.matrix(as.formula(paste("~", paste(predictors[i], collapse = " + "))), data = data))[-1])
-            if(!is.null(m.moderators.ori)){
+            if(!is.null(unique(unlist(moderators.ori.list)))){
               if(!predictors[i] %in% covariates.disc){
                 assign(paste0("v", k + 1), moderators.ori.list[[i + 1]])
                 k = k + 1
@@ -3118,14 +3126,14 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
               }
             }
           }
-          if(!is.null(m.moderators.ori)){
+          if(!is.null(unique(unlist(moderators.ori.list)))){
             moderators.new = rep(list(NULL), k)
             for(i in 1:k){
               if(!is.null(get(paste0("v", i))))
                 moderators.new[[i]] = get(paste0("v", i))
             }
           }
-          if(!is.null(m.moderators.ori)){
+          if(!is.null(unique(unlist(moderators.ori.list)))){
             return(list(moderators.new = moderators.new, predictors.new = predictors.new))
           } else {
             return(list(predictors.new = predictors.new))
@@ -3186,6 +3194,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
               }
             }
           }
+          
           colnames(predict.data) = gsub("[^[:alnum:]\\:\\s]", "", colnames(predict.data))
           predict.data = as.data.frame(predict.data)
           
@@ -4443,10 +4452,17 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
           return(sens.results[, sens.effect])
         } else {
           # Step 5. Compute summary statistics such as point estimates and confidence intervals.
-          TE = results[, "TIE"] + results[, "PDE"]
-          TE.ref = results[, "TIE.ref"] + results[, "PDE.ref"]
-          TE.dif = results[, "TIE.dif"] + results[, "PDE.dif"]
-          results = cbind(TE, results[, 1:5], TE.ref, results[, 6:10], TE.dif, results[, 11:15])
+          results.ori = results
+          TE = results.ori[, "TIE"] + results.ori[, "PDE"]
+          results = cbind(TE, results.ori[, 1:5])
+          if(!is.null(ref.mod.values)){
+            TE.ref = results.ori[, "TIE.ref"] + results.ori[, "PDE.ref"]
+            results = cbind(results, TE.ref, results.ori[, 6:10])
+            if(!is.null(comp.mod.values)){
+              TE.dif = results.ori[, "TIE.dif"] + results.ori[, "PDE.dif"]
+              results = cbind(results, TE.dif, results.ori[, 11:15])
+            }
+          }
           
           est.results = apply(results, 2, mean)
           se.results = apply(results, 2, sd)
