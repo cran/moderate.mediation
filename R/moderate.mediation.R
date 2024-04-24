@@ -26,7 +26,7 @@ NULL
 #' 
 #' 'modmed' is used to fit mediator and outcome models and estimate and test causal effects for causal moderated mediation analysis. It is applicable to a treatment of any scale, a binary or continuous mediator and outcome, one or more moderators of any scale, and a wide range of scenarios of moderated mediation. 
 #' @param data A data frame containing the variables in the analysis. Users need to impute any missing values in the data before running the function.
-#' @param treatment A character string indicating the name of the treatment variable.
+#' @param treatment A character string indicating the name of the treatment variable. If a treatment is binary, please code it as 0 and 1.
 #' @param mediator A character string indicating the name of the mediator variable.
 #' @param outcome A character string indicating the name of the outcome variable.
 #' @param moderators.disc A name vector of all the discrete moderators under study (string). The default is NULL.  
@@ -159,7 +159,9 @@ modmed = function(
 ){
   if(sum(is.na(data)))
     stop("Users need to impute any missing values in the data before running the function.")
-  data[, treatment] = as.numeric(data[, treatment]) # This package is applicable to binary or continuous treatment. Some data sets may code treatment as a factor. It needs to be changed to numeric first. Otherwise, the variable name will be changed after model.matrix(), which will cause a problem.
+  if(is.character(unique(data[, treatment])))
+    stop("If a treatment is binary, please code it as 0 and 1.")
+  data[, treatment] = as.numeric(as.character(data[, treatment])) # Otherwise, if the treatment is categorical, its name may change after model.matrix(), which will cause problems. Without as.character, the values would change.
   Unmeasure = NULL # Otherwise no visible binding for global variable
   
   confounders = c(covariates.disc, covariates.cont)
@@ -222,10 +224,16 @@ modmed = function(
     if(any(!unique(c(m.moderators.ori, y.moderators.ori)) %in% moderators)|any(!moderators %in% unique(c(m.moderators.ori, y.moderators.ori))))
       stop('The union of the two sets of moderators in m.model and y.model should be the same as the union of moderators.disc and moderators.cont.')
     
-    for(i in 1:length(moderators)){
-      if(!moderators[i] %in% unique(unlist(m.moderators[-1])) & !moderators[i] %in% unique(unlist(y.moderators[-1])))
-        stop("A moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model.")
+    if(!is.null(c(moderators.disc, moderators.cont))){
+      for(i in 1:length(moderators)){
+        if(!moderators[i] %in% unique(unlist(m.moderators)) & !moderators[i] %in% unique(unlist(y.moderators)))
+          stop("A moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model.")
+      }
+    } else {
+      if(!is.null(c(unique(unlist(m.moderators)), unique(unlist(y.moderators)))))
+        stop("A moderator in the model needs to be specified in moderators.disc/moderators.cont.")
     }
+
     
     if(!all(is.null(unlist(m.moderators)))){
       if(!all(unique(unlist(m.moderators[-which(names(m.moderators) == "intercept")])) %in% m.moderators[[which(names(m.moderators) == "intercept")]]))
@@ -1263,6 +1271,7 @@ modmed = function(
       } else {
         earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
       }
+      earth.moderators = gsub("[^[:alnum:]\\:\\s]", "", earth.moderators)
       earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
       earth.ref = cbind(predict.m.data.ref, predict.y.data.ref)[1, earth.moderators]
       ref.fun = function(x){
@@ -1361,6 +1370,7 @@ modmed = function(
         } else {
           earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
         }
+        earth.moderators = gsub("[^[:alnum:]\\:\\s]", "", earth.moderators)
         earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
         earth.comp = cbind(predict.m.data.comp, predict.y.data.comp)[1, earth.moderators]
         comp.fun = function(x){
@@ -2236,7 +2246,7 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' @param t.rand TRUE if the treatment is randomized, and FALSE if not. The default is TRUE. 
 #' @param t.model A list. The default is NULL. This needs to be specified only if t.rand = FALSE because a treatment model is required for the derivation of the conditional distribution of the unmeasured pretreatment confounder. The names of the elements in t.model must include intercept and the pretreatment covariates that predict the treatment and are contained in the union of covariates.disc, and covariates.cont. Each element of the list is a vector of the names of the moderators (string) of the coefficient of the main model predictor as represented by the name of the element. The moderators of the intercept must include all the moderators in the treatment model. If a main model coefficient is not moderated, then the corresponding vector should be specified as NULL. The moderators should be contained in the union of moderators.disc, and moderators.cont. A moderator in the mediator and outcome models does not necessarily moderate any coefficient in the treatment model. If it only has its main effect in the treatment model, it will be included in the vector of the intercept in t.model.
 #' @param t.scale The scale of the treatment (string). Can be "continuous" or "binary". The default is "binary".
-#' @param b.t This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.
+#' @param b.t This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. Please make sure that 1 - b.t^2 is not negative. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.
 #' @param iter The number of iterations in the stochastic EM algorithm for generating the unobserved pretreatment confounder. The default is 10. 
 #' @param nsim The number of random draws of the unobserved pretreatment confounder in each cell. The default is 5. Increase the number for more smooth curves.
 #' @param ncore The number of cores for parallel computing. The default is the number of CPU cores on the current host minus 1. One core is saved for users to run other programs on the computer while running the R function. 
@@ -2264,11 +2274,17 @@ modmed.plot = function(object, effect, moderator, other.mod.disc.values = NULL, 
 #' }
 #' 
 modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(rownames(object$effects) %in% c("TE", "TE.ref", "TE.dif"))], range.b.m = NULL, range.b.y = NULL, grid.b.m = 10, grid.b.y = 10, U.scale = "binary", p.u = 0.5, sigma.u = 1, t.rand = TRUE, t.model = NULL, t.scale = "binary", b.t = NULL, iter = 10, nsim = 5, ncore = 2){
+  if(!is.null(b.t)){
+    if(1 - b.t^2 < 0)
+      stop("b.t is the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. Please make sure that 1 - b.t^2 is not negative.")
+    b.t.ori = b.t
+  }
   if("TE" %in% sens.effect|"TE.ref" %in% sens.effect|"TE.dif" %in% sens.effect)
     stop("Sensitivity analysis here is for mediation effects, not including the total treatment effect.")
   if(any(!sens.effect %in% rownames(object$effects)))
     stop("sens.effect must be a subvector of the effects in the output of modmed function.")
   args.full = object$args.full
+  data = args.full$data
   outcome = args.full$outcome
   t = treatment = args.full$treatment
   m = mediator = args.full$mediator
@@ -2282,7 +2298,6 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
   m.predictors = object$m.predictors
   y.predictors = object$y.predictors
   conf.level = args.full$conf.level
-  data = args.full$data
   formula.m = object$formula.m
   formula.y = object$formula.y
   m.predictors.new = object$m.predictors.new
@@ -2306,8 +2321,6 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
     
     confounders = c(object$args.full$covariates.disc, object$args.full$covariates.cont)
     moderators = c(object$args.full$moderators.disc, object$args.full$moderators.cont)
-    if(!"intercept" %in% t.predictors)
-      stop("The element names in t.model must include 'Intercept'.")
     if(any(moderators %in% t.predictors)){
       stop("The element names in t.model cannot include moderators. In other words, please do not include moderators in the main model.")
     } else {
@@ -2925,7 +2938,9 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
     ){
       if(sum(is.na(data)))
         stop("Users need to impute any missing values in the data before running the function.")
-      data[, treatment] = as.numeric(data[, treatment]) # This package is applicable to binary or continuous treatment. Some data sets may code treatment as a factor. It needs to be changed to numeric first. Otherwise, the variable name will be changed after model.matrix(), which will cause a problem.
+      if(is.character(unique(data[, treatment])))
+        stop("If a treatment is categorical, please code each category as a numeric value.")
+      data[, treatment] = as.numeric(as.character(data[, treatment])) # Otherwise, if the treatment is categorical, its name may change after model.matrix(), which will cause problems. Without as.character, the values would change.
       Unmeasure = NULL # Otherwise no visible binding for global variable
       
       confounders = c(covariates.disc, covariates.cont)
@@ -2988,10 +3003,16 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
         if(any(!unique(c(m.moderators.ori, y.moderators.ori)) %in% moderators)|any(!moderators %in% unique(c(m.moderators.ori, y.moderators.ori))))
           stop('The union of the two sets of moderators in m.model and y.model should be the same as the union of moderators.disc and moderators.cont.')
         
-        for(i in 1:length(moderators)){
-          if(!moderators[i] %in% unique(unlist(m.moderators[-1])) & !moderators[i] %in% unique(unlist(y.moderators[-1])))
-            stop("A moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model.")
+        if(!is.null(c(moderators.disc, moderators.cont))){
+          for(i in 1:length(moderators)){
+            if(!moderators[i] %in% unique(unlist(m.moderators)) & !moderators[i] %in% unique(unlist(y.moderators)))
+              stop("A moderator specified in moderators.disc and moderators.cont must moderate at least one slope in either the mediator model or the outcome model.")
+          }
+        } else {
+          if(!is.null(c(unique(unlist(m.moderators)), unique(unlist(y.moderators)))))
+            stop("A moderator in the model needs to be specified in moderators.disc/moderators.cont.")
         }
+        
         
         if(!all(is.null(unlist(m.moderators)))){
           if(!all(unique(unlist(m.moderators[-which(names(m.moderators) == "intercept")])) %in% m.moderators[[which(names(m.moderators) == "intercept")]]))
@@ -4029,6 +4050,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
           } else {
             earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
           }
+          earth.moderators = gsub("[^[:alnum:]\\:\\s]", "", earth.moderators)
           earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
           earth.ref = cbind(predict.m.data.ref, predict.y.data.ref)[1, earth.moderators]
           ref.fun = function(x){
@@ -4127,6 +4149,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
             } else {
               earth.moderators = unique(c(m.moderators.new[[1]], y.moderators.new[[1]]))
             }
+            earth.moderators = gsub("[^[:alnum:]\\:\\s]", "", earth.moderators)
             earth.data = cbind(predict.m.data, predict.y.data)[, earth.moderators]
             earth.comp = cbind(predict.m.data.comp, predict.y.data.comp)[1, earth.moderators]
             comp.fun = function(x){
@@ -4576,6 +4599,8 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
     args.full = args.full.ori
     args.full$b.m = b.m.all[i]
     args.full$b.y = b.y.all[j]
+    if(!is.null(b.t))
+      b.t = b.t.ori 
     if(y.scale == "binary")
       sd.y = sd.y.ori/sqrt(1 - args.full$b.y^2) # When U is adjusted for, the latent index on the original scale changes by args.full$b.y * sqrt(var.y/var.u) * U, where args.full$b.y is standardized and transformed back to the original coefficient after multiplying with sqrt(var.y/var.u). Hence, var.y = var.y.ori + args.full$b.y^2 * var.y. Hence, var.y = var.y.ori/(1- args.full$b.y^2).
     if(m.scale == "binary")
@@ -4832,6 +4857,9 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
     results.new[["CIL.INT.dif"]] = CIL_INT.dif.all
     results.new[["CIU.INT.dif"]] = CIU_INT.dif.all
   }
+  
+  if(!is.null(b.t))
+    b.t = b.t.ori 
   
   return(list(b.t = b.t, X.coef.plot = X.coef.plot, range.b.m = range.b.m, range.b.y = range.b.y, b.y.all = b.y.all, b.m.all = b.m.all, results.new = results.new))
 }

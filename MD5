@@ -1,10 +1,10 @@
-9f306d31548ec4da73df4e1dcfcf0e9c *DESCRIPTION
+fea6d42b461d2b6bc01ddb614b04fb74 *DESCRIPTION
 74f68fb577fecccb0f05a834946e2e00 *NAMESPACE
-7de51fbb5f3334e990fe5146cf27b0fb *R/moderate.mediation.R
+e0341fd54f708338f3b15ab8af59a1c8 *R/moderate.mediation.R
 637e3a7d44dae391b21edbc75e20e1ba *data/newws.rda
-6c07853b7709edee2f9fc03aea706197 *man/modmed.Rd
+2023068547921252b58424f90eeae027 *man/modmed.Rd
 9d97ed79666200b657732cc80e1d134f *man/modmed.plot.Rd
-1b4de4d0bd02665914fb91fbcfd49679 *man/modmed.sens.Rd
+afb9e62780c45204cdcbd2d85024342d *man/modmed.sens.Rd
 4db4c83310923cf345d886c5c92f7b89 *man/newws.Rd
 a3fdc6e4edf9f86c308cc2f08fbad75a *man/sens.plot.Rd
 c283823688fb3eaaa2990a1c7b80ef16 *man/summary_modmed.Rd

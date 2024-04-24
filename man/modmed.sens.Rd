@@ -49,7 +49,7 @@ modmed.sens(
 
 \item{t.scale}{The scale of the treatment (string). Can be "continuous" or "binary". The default is "binary".}
 
-\item{b.t}{This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.}
+\item{b.t}{This needs to be specified only if t.rand = FALSE. The value of the sensitivity parameter that represents the slope of the unmeasured pretreatment confounder in the standardized treatment model, in which both the independent and dependent variables are standardized. Please make sure that 1 - b.t^2 is not negative. If the dependent variable is binary, its latent index is standardized instead. When t.rand = TRUE, b.t is NULL, because when the treatment is randomized, there is no need to specify this sensitivity parameter. Hence, the default of b.t is NULL.}
 
 \item{iter}{The number of iterations in the stochastic EM algorithm for generating the unobserved pretreatment confounder. The default is 10.}
 

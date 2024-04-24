@@ -39,7 +39,7 @@ modmed(
 \arguments{
 \item{data}{A data frame containing the variables in the analysis. Users need to impute any missing values in the data before running the function.}
 
-\item{treatment}{A character string indicating the name of the treatment variable.}
+\item{treatment}{A character string indicating the name of the treatment variable. If a treatment is binary, please code it as 0 and 1.}
 
 \item{mediator}{A character string indicating the name of the mediator variable.}
 
