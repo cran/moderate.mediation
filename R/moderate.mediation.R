@@ -41,7 +41,7 @@ NULL
 #' @param ref.mod.disc.values A vector of reference values of the discrete moderators given which the conditional causal effects are estimated. The default is NULL. The length and order of ref.mod.disc.values should be the same as moderators.disc. If one does not want to condition some moderators on specific values, one may specify their values to be NA. If the discrete moderators take the same reference value, ref.moderator.disc.values can be specified as a single value. The moderators whose reference values are specified must be included in either the mediator model or the outcome model or both.
 #' @param comp.mod.cont.values A vector of compare values of the continuous moderators given which the conditional causal effects are estimated. The default is NULL. The length and order of comp.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA. If the continuous moderators take the same compare value, comp.moderator.cont.values can be specified as a single value. If not NULL, results contrasting the causal effects given compare moderator values with those given reference moderator values will be reported. 
 #' @param ref.mod.cont.values A vector of reference values of the continuous moderators given which the conditional causal effects are estimated. The default is NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA. If the continuous moderators take the same reference value, ref.moderator.cont.values can be specified as a single value. The moderators whose reference values are specified must be included in either the mediator model or the outcome model or both.
-#' @param m.scale A character string indicating the scale of the mediator. "continuous" if the mediator is continuous. "binary" if the mediator is binary. Logistic regression is fitted in this case. The default is "continuous".
+#' @param m.scale A character string indicating the scale of the mediator. "continuous" if the mediator is continuous. "binary" if the mediator is binary. Probit link is used in this case. The default is "continuous".
 #' @param y.scale A character string indicating the scale of the outcome. "continuous" if the outcome is continuous. "binary" if the outcome is binary. Probit link is used in this case. The default is "continuous".
 #' @param method Estimation and inference method. if 'mc', the Monte Carlo method is used; if 'boot', bootstrap is used. Default is 'mc'. When sample size is relatively small and the mediator or binary is binary, 'boot' is preferred. Otherwise, 'mc' is more recommended, mainly because its running speed is much faster.
 #' @param nmc Number of simulations involved in the Monte Carlo algorithm. Used if method = 'mc'. The default value is 1000.
@@ -55,7 +55,7 @@ NULL
 #' @param b.y Sensitivity parameter that represents the conditional association between the unobserved pretreatment confounder and the outcome. It is NULL in the original analysis. The default is NULL. It is used only when modmed.sens is run.
 #' @param plot.effect The effect to be plotted. The default is NULL. It is used only when modmed.plot is run.
 #' 
-#' @return A list containing
+#' @return The output of the function modmed contains a list containing the following elements. The function 'summary' or 'summary_modmed' can be used to obtain a table of the results.
 #' \item{effects}{Estimation results of the causal effects. "TE" indicates the total treatment effect. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TE.ref", "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TE.dif", TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
 #' \item{m.model}{Estimation results of the mediator model}
 #' \item{y.model}{Estimation results of the outcome model}
@@ -124,6 +124,7 @@ NULL
 #'                         m.scale = "binary", 
 #'                         y.scale = "continuous", 
 #'                         seed = 1) 
+#' summary(modmed.results)
 #'}
 
 modmed = function(
@@ -1807,30 +1808,36 @@ modmed = function(
       args.full = mget(names(formals()), sys.frame(sys.nframe()))
       
       if(y.scale == "continuous")
-        return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
+        res = list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data)
       if(y.scale == "binary")
-        return(list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data))
+        res = list(effects = summary.effects, m.model = summary.m, y.model = summary.y, results = results, args = args, args.full = args.full, l.m = l.m, l.y = l.y, formula.m = formula.m, formula.y = formula.y, m.predictors = m.predictors, y.predictors = y.predictors, m.moderators = m.moderators, y.moderators = y.moderators, m.predictors.new = m.predictors.new, y.predictors.new = y.predictors.new, m.moderators.new = m.moderators.new, y.moderators.new = y.moderators.new, predict.m.data.ref = predict.m.data.ref, predict.m.data.comp = predict.m.data.comp, predict.m.data = predict.m.data, predict.y.data.ref = predict.y.data.ref, predict.y.data.comp = predict.y.data.comp, predict.y.data = predict.y.data, data = data)
+
+      # giving the output a class to allow users to using summary() to get the results using the s3 method
+      class(res) <- "addition"
+      return(res)
     }
   }
 }
 
 #' Summarizing Output for Causal Moderated Mediation Analysis
 #' 
-#' 'summary_modmed' is used to report from causal moderated mediation analysis
+#' 'summary_modmed' is used to report from causal moderated mediation analysis. Alternatively, 'summary' can also be used to generate the same output.
 #' @param object 	output from \code{modmed} function
+#' @param ... additional arguments affecting the summary produced.
 #' @return \code{modmed} returns causal moderated mediation analysis results. The \code{summary_modmed} function provides summary tables of the results.
 #' @author Xu Qin and Lijuan Wang
 #' @references Qin, X., & Wang, L. (2023). Causal moderated mediation analysis: Methods and software
-#' @export
 #' @importFrom stats df.residual pf anova AIC getCall
 #' @examples
 #' \donttest{
 #' data(newws)
 #' modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp", outcome = "depression", covariates.disc = c("emp_prior", "nevmar", "hispanic", "nohsdip"), covariates.cont = c("workpref", "attitude", "depress_prior"), moderators.disc = "CHCNT", moderators.cont = "ADCPC", m.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), y.model = list(intercept = c("ADCPC", "CHCNT"), treatment = c("ADCPC", "CHCNT"), mediator = c("ADCPC", "CHCNT"), tm = c("ADCPC", "CHCNT"), emp_prior = NULL, nevmar = NULL, hispanic = NULL, nohsdip = NULL, workpref = NULL, attitude = NULL, depress_prior = NULL), comp.mod.disc.values = 3, ref.mod.disc.values = 2, comp.mod.cont.values = 5050, ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous", seed = 1) 
 #' summary_modmed(modmed.results)
+#' summary(modmed.results)
 #' }
 
-summary_modmed = function(object){
+#' @export 
+summary_modmed = function(object, ...){
   args = object$args
   args.full = object$args.full 
   m.scale = args$m.scale
@@ -1896,6 +1903,9 @@ summary_modmed = function(object){
   }
   cat("\n\n") 
 }
+
+#' @export 
+summary.addition = summary_modmed
 
 #' Visual Representation of the Causal Moderated Mediation Analysis Results
 #' 
@@ -2939,7 +2949,7 @@ modmed.sens = function(object, sens.effect = rownames(object$effects)[-which(row
       if(sum(is.na(data)))
         stop("Users need to impute any missing values in the data before running the function.")
       if(is.character(unique(data[, treatment])))
-        stop("If a treatment is categorical, please code each category as a numeric value.")
+        stop("If a treatment is binary, please code it as 0 and 1.")
       data[, treatment] = as.numeric(as.character(data[, treatment])) # Otherwise, if the treatment is categorical, its name may change after model.matrix(), which will cause problems. Without as.character, the values would change.
       Unmeasure = NULL # Otherwise no visible binding for global variable
       

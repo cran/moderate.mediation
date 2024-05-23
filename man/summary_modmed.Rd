@@ -4,16 +4,18 @@
 \alias{summary_modmed}
 \title{Summarizing Output for Causal Moderated Mediation Analysis}
 \usage{
-summary_modmed(object)
+summary_modmed(object, ...)
 }
 \arguments{
 \item{object}{output from \code{modmed} function}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \value{
 \code{modmed} returns causal moderated mediation analysis results. The \code{summary_modmed} function provides summary tables of the results.
 }
 \description{
-'summary_modmed' is used to report from causal moderated mediation analysis
+'summary_modmed' is used to report from causal moderated mediation analysis. Alternatively, 'summary' can also be used to generate the same output.
 }
 \examples{
 \donttest{
@@ -33,6 +35,7 @@ modmed.results = modmed(data = newws, treatment = "treat", mediator = "emp",
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
 summary_modmed(modmed.results)
+summary(modmed.results)
 }
 }
 \references{

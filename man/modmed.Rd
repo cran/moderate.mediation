@@ -69,7 +69,7 @@ modmed(
 
 \item{ref.mod.cont.values}{A vector of reference values of the continuous moderators given which the conditional causal effects are estimated. The default is NULL. The length and order of ref.mod.cont.values should be the same as moderators.cont. If one does not want to condition some moderators on specific values, one may specify their values to be NA. If the continuous moderators take the same reference value, ref.moderator.cont.values can be specified as a single value. The moderators whose reference values are specified must be included in either the mediator model or the outcome model or both.}
 
-\item{m.scale}{A character string indicating the scale of the mediator. "continuous" if the mediator is continuous. "binary" if the mediator is binary. Logistic regression is fitted in this case. The default is "continuous".}
+\item{m.scale}{A character string indicating the scale of the mediator. "continuous" if the mediator is continuous. "binary" if the mediator is binary. Probit link is used in this case. The default is "continuous".}
 
 \item{y.scale}{A character string indicating the scale of the outcome. "continuous" if the outcome is continuous. "binary" if the outcome is binary. Probit link is used in this case. The default is "continuous".}
 
@@ -96,7 +96,7 @@ modmed(
 \item{plot.effect}{The effect to be plotted. The default is NULL. It is used only when modmed.plot is run.}
 }
 \value{
-A list containing
+The output of the function modmed contains a list containing the following elements. The function 'summary' or 'summary_modmed' can be used to obtain a table of the results.
 \item{effects}{Estimation results of the causal effects. "TE" indicates the total treatment effect. "TIE" indicates the total indirect effect, "PDE" indicates the pure direct effect, and "INT" indicates the natural treatment-by-mediator interaction effect. "TE.ref", "TIE.ref", "PDE.ref", and "INT.ref" indicate the corresponding effects when the moderators take the reference values. "TE.dif", TIE.dif", "PDE.dif", and "INT.dif" each indicates the difference in the corresponding effect between the compare levels and the reference levels of the moderators.}
 \item{m.model}{Estimation results of the mediator model}
 \item{y.model}{Estimation results of the outcome model}
@@ -153,6 +153,7 @@ modmed.results = modmed(data = newws, treatment = "treat",
     ref.mod.disc.values = 2, comp.mod.cont.values = 5050,
     ref.mod.cont.values = 5050, m.scale = "binary", y.scale = "continuous",
     seed = 1)
+summary(modmed.results)
 }
 }
 \references{
