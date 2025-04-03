@@ -165,6 +165,16 @@ modmed = function(
   data[, treatment] = as.numeric(as.character(data[, treatment])) # Otherwise, if the treatment is categorical, its name may change after model.matrix(), which will cause problems. Without as.character, the values would change.
   Unmeasure = NULL # Otherwise no visible binding for global variable
   
+  model.covariates = c(names(m.model)[-which(names(m.model)%in%c("intercept", "treatment"))], names(y.model)[-which(names(y.model)%in%c("intercept", "treatment", "mediator", "tm"))])
+  obs.covariates = c(covariates.disc, covariates.cont)
+  if(any(!model.covariates%in%obs.covariates)|any(!obs.covariates%in%model.covariates))
+  stop("The union of the covariates in m.model and y.model should be equal to the union of discrete and continuous covariates.")
+  
+  for(i in 1:length(covariates.disc)){
+    if(length(unique(data[, covariates.disc[i]])) > 10)
+      stop(paste("Please move", covariates.disc[i], "from covariates.disc to covariates.cont."))
+  }
+    
   confounders = c(covariates.disc, covariates.cont)
   moderators = c(moderators.disc, moderators.cont)
   if(any(moderators %in% confounders))
